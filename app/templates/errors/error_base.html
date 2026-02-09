@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% block title %}Greška {{ code }}{% endblock %} {%
+block content %}
+<section class="page-section-header">
+  <div class="container">
+    <div class="text-center">
+      <h2
+        class="section-heading text-uppercase text-white"
+        style="font-size: 6rem">
+        {{ code }}
+      </h2>
+    </div>
+  </div>
+</section>
+<section class="page-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 text-center">
+        <div class="mb-4">
+          <i class="fas {{ icon }} fa-4x" style="color: {{ color }};"></i>
+        </div>
+        <h3 class="mb-3">{{ title }}</h3>
+        <p class="text-muted mb-4">{{ message }}</p>
+        <a
+          href="{{ url_for('main.index') }}"
+          class="btn btn-primary btn-xl text-uppercase">
+          <i class="fas fa-home me-2"></i>Početna stranica
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

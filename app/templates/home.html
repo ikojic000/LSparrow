@@ -1,0 +1,225 @@
+{% extends "base.html" %} {% block title %}LSparrow - Početna{% endblock %} {%
+block content %}
+<!-- Masthead -->
+<header class="masthead">
+  <div class="container px-4 px-lg-5 h-100">
+    <div
+      class="row gx-4 gx-lg-5 h-100 align-items-center justify-content-center text-center">
+      <div class="col-lg-8 align-self-end">
+        <img
+          src="{{ url_for('static', filename='images/svg/logo_1.svg') }}"
+          alt="LSparrow Logo"
+          class="masthead-logo" />
+        <h1 class="text-white font-weight-bold text-uppercase">LSparrow</h1>
+        <hr class="divider divider-light" />
+      </div>
+      <div class="col-lg-8 align-self-baseline">
+        <p class="text-white-75 mb-5">
+          Alat za statističku analizu podataka prikupljenih putem Google Forms
+          anketa
+        </p>
+        <a class="btn btn-primary btn-xl" href="{{ url_for('main.analysis') }}">
+          <i class="fas fa-chart-line me-2"></i>Započni analizu
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- About / What This App Does -->
+<section class="page-section bg-primary" id="about">
+  <div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+      <div class="col-lg-8 text-center">
+        <h2 class="text-white mt-0">Što nudi ova aplikacija?</h2>
+        <hr class="divider divider-light" />
+        <p class="text-white-75 mb-4">
+          Jednostavna i brza statistička analiza anketnih podataka na Likertovoj
+          skali (1-5). Učitajte CSV, dobijte statistiku — bez kompliciranja.
+        </p>
+        <a class="btn btn-light btn-xl" href="#features">
+          <i class="fas fa-arrow-down me-2"></i>Saznaj više
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="page-section" id="features">
+  <div class="container px-4 px-lg-5">
+    <h2 class="text-center mt-0">Kako radi?</h2>
+    <hr class="divider" />
+    <div class="row gx-4 gx-lg-5">
+      <div class="col-lg-4 col-md-6 text-center">
+        <div class="mt-5">
+          <div class="mb-2">
+            <i class="bi-file-earmark-spreadsheet fs-1 text-primary"></i>
+          </div>
+          <h3 class="h4 mb-2">Učitaj CSV datoteku</h3>
+          <p class="text-muted mb-0">
+            Jednostavno prenesite CSV datoteku izvezenu iz Google Forms-a.
+            Aplikacija automatski prepoznaje pitanja s Likertovom skalom (1-5).
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 text-center">
+        <div class="mt-5">
+          <div class="mb-2">
+            <i class="bi-calculator fs-1 text-primary"></i>
+          </div>
+          <h3 class="h4 mb-2">Izračunaj statistiku</h3>
+          <p class="text-muted mb-0">
+            Automatski se izračunavaju deskriptivne statistike: aritmetička
+            sredina, standardna devijacija, medijan, asimetrija, zaobljenost i
+            K-S test normalnosti.
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 text-center">
+        <div class="mt-5">
+          <div class="mb-2">
+            <i class="bi-diagram-3 fs-1 text-primary"></i>
+          </div>
+          <h3 class="h4 mb-2">Grupiraj rezultate</h3>
+          <p class="text-muted mb-0">
+            Podatke možete grupirati prema demografskim kategorijama (dobna
+            skupina, radno iskustvo, područje djelovanja) za detaljniju analizu.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="page-section bg-light" id="how-it-works">
+  <div class="container px-4 px-lg-5">
+    <div class="text-center">
+      <h2 class="section-heading text-uppercase">Kako funkcionira?</h2>
+      <hr class="divider" />
+      <h3 class="section-subheading text-muted">
+        Tri jednostavna koraka do rezultata.
+      </h3>
+    </div>
+    <div class="row">
+      <div class="col-lg-4 mb-4">
+        <div class="step-card text-center">
+          <div class="step-number">1</div>
+          <h4>Izvezite CSV</h4>
+          <p class="text-muted">
+            Iz Google Forms-a izvezite odgovore ankete u CSV formatu.
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-4 mb-4">
+        <div class="step-card text-center">
+          <div class="step-number">2</div>
+          <h4>Učitajte datoteku</h4>
+          <p class="text-muted">
+            Na stranici za analizu odaberite CSV datoteku i kliknite gumb za
+            izračun.
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-4 mb-4">
+        <div class="step-card text-center">
+          <div class="step-number">3</div>
+          <h4>Pregledajte rezultate</h4>
+          <p class="text-muted">
+            Rezultati se prikazuju u tablici s mogućnošću grupiranja po
+            demografskim kategorijama.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <a class="btn btn-primary btn-xl" href="{{ url_for('main.analysis') }}">
+        <i class="fas fa-arrow-right me-2"></i>Idi na analizu
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Statistics Explained -->
+<section class="page-section" id="stats-info">
+  <div class="container px-4 px-lg-5">
+    <div class="text-center">
+      <h2 class="section-heading text-uppercase">Statistički pokazatelji</h2>
+      <hr class="divider" />
+      <h3 class="section-subheading text-muted">
+        Pregled svih statistika koje aplikacija izračunava.
+      </h3>
+    </div>
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="stat-explain-card">
+          <h5>
+            <i class="fas fa-hashtag text-primary me-2"></i>N (Broj ispitanika)
+          </h5>
+          <p class="text-muted">
+            Ukupan broj valjanih odgovora za svako pitanje.
+          </p>
+        </div>
+        <div class="stat-explain-card">
+          <h5>
+            <i class="fas fa-balance-scale text-primary me-2"></i>AS
+            (Aritmetička sredina)
+          </h5>
+          <p class="text-muted">
+            Prosječna ocjena svih ispitanika za pojedino pitanje.
+          </p>
+        </div>
+        <div class="stat-explain-card">
+          <h5>
+            <i class="fas fa-arrows-alt-h text-primary me-2"></i>SD (Standardna
+            devijacija)
+          </h5>
+          <p class="text-muted">
+            Mjera raspršenosti odgovora oko aritmetičke sredine.
+          </p>
+        </div>
+        <div class="stat-explain-card">
+          <h5><i class="fas fa-grip-lines text-primary me-2"></i>Medijan</h5>
+          <p class="text-muted">
+            Srednja vrijednost kada se svi odgovori poredaju po veličini.
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="stat-explain-card">
+          <h5>
+            <i class="fas fa-wave-square text-primary me-2"></i>Ske (Asimetrija)
+          </h5>
+          <p class="text-muted">Mjera simetričnosti distribucije odgovora.</p>
+        </div>
+        <div class="stat-explain-card">
+          <h5>
+            <i class="fas fa-mountain text-primary me-2"></i>Kur (Zaobljenost)
+          </h5>
+          <p class="text-muted">
+            Mjera zaobljenosti distribucije u usporedbi s normalnom krivuljom.
+          </p>
+        </div>
+        <div class="stat-explain-card">
+          <h5>
+            <i class="fas fa-ruler text-primary me-2"></i>Max D (K-S statistika)
+          </h5>
+          <p class="text-muted">
+            Maksimalno odstupanje empirijske od teorijske distribucije.
+          </p>
+        </div>
+        <div class="stat-explain-card">
+          <h5>
+            <i class="fas fa-check-circle text-primary me-2"></i>K-S p
+            (p-vrijednost)
+          </h5>
+          <p class="text-muted">
+            Vjerojatnost za Kolmogorov-Smirnov test normalnosti distribucije.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

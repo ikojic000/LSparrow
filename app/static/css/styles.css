@@ -1,0 +1,583 @@
+/*!
+ * LSparrow - Custom Styles
+ * Based on Start Bootstrap Creative theme, adapted with LSparrow palette
+ */
+
+/* ===== CSS Variables (LSparrow Palette) ===== */
+:root {
+  --color-primary: #2f6db5; /* LS Blue */
+  --color-primary-dark: #245a96;
+  --color-primary-rgb: 47, 109, 181;
+  --color-secondary: #6b3f2a; /* Sparrow Brown */
+  --color-secondary-rgb: 107, 63, 42;
+  --color-accent: #f2a23a; /* Beak Gold */
+  --color-accent-rgb: 242, 162, 58;
+  --color-success: #6dbe8b;
+  --color-danger: #e96a5a;
+  --bg-main: #fafaf8;
+  --bg-card: #ffffff;
+  --border-light: #e4e2dd;
+  --text-main: #2e2e2e;
+  --text-muted: #7a7a7a;
+}
+
+/* ===== Bootstrap Overrides ===== */
+.bg-primary {
+  background-color: var(--color-primary) !important;
+}
+.bg-success {
+  background-color: var(--color-success) !important;
+}
+.bg-danger {
+  background-color: var(--color-danger) !important;
+}
+.bg-warning {
+  background-color: var(--color-accent) !important;
+}
+.bg-dark {
+  background-color: var(--text-main) !important;
+}
+.bg-light {
+  background-color: var(--bg-main) !important;
+}
+.text-primary {
+  color: var(--color-primary) !important;
+}
+
+.btn-outline-primary {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.btn-outline-primary:hover {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+.badge.bg-secondary {
+  background-color: var(--color-secondary) !important;
+}
+
+.alert-info {
+  background-color: #e8f0fa;
+  border-color: #c6d9f0;
+  color: var(--color-primary);
+}
+.alert-danger {
+  background-color: #fce8e5;
+  border-color: #f5c6c0;
+  color: #a3382c;
+}
+.table-dark {
+  --bs-table-bg: var(--color-secondary);
+  --bs-table-border-color: #5a3523;
+  color: #fff;
+}
+
+/* ===== Global Styles ===== */
+html {
+  height: 100%;
+  scroll-padding-top: calc(4.5rem - 1px);
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  font-family: "Alan Sans", sans-serif;
+  font-optical-sizing: auto;
+  overflow-x: hidden;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+}
+
+p {
+  line-height: 1.75;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Comic Relief", system-ui, sans-serif;
+  font-weight: 700;
+  color: var(--color-secondary);
+}
+
+a {
+  color: var(--color-primary);
+  transition: color 0.2s ease;
+}
+a:hover {
+  color: var(--color-primary-dark);
+}
+
+.text-white-75 {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+/* ===== Buttons ===== */
+.btn-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  font-family: "Alan Sans", sans-serif;
+  font-weight: 700;
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--text-main);
+}
+
+.btn-xl {
+  padding: 1.25rem 2.25rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 10rem;
+}
+
+/* ===== Divider (Creative theme accent) ===== */
+hr.divider {
+  height: 0.2rem;
+  max-width: 3.25rem;
+  margin: 1.5rem auto;
+  background-color: var(--color-accent);
+  opacity: 1;
+  border: 0;
+}
+
+hr.divider-light {
+  background-color: #fff;
+}
+
+/* ===== Navbar (Creative theme style) ===== */
+#mainNav {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  background-color: #fff;
+  transition: background-color 0.2s ease;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+#mainNav .navbar-brand {
+  font-family: "Comic Relief", system-ui, sans-serif;
+  font-weight: 700;
+  color: var(--color-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+#mainNav .navbar-brand:hover {
+  color: var(--color-primary);
+}
+#mainNav .navbar-brand img {
+  height: 180px;
+  width: auto;
+  margin-top: -68px;
+  margin-bottom: -68px;
+}
+
+#mainNav .navbar-nav .nav-item .nav-link {
+  font-family: "Alan Sans", sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  padding: 0.75rem 0;
+  letter-spacing: 0.0625em;
+  transition: color 0.2s ease;
+}
+#mainNav .navbar-nav .nav-item .nav-link:hover,
+#mainNav .navbar-nav .nav-item .nav-link:active {
+  color: var(--color-primary);
+}
+#mainNav .navbar-nav .nav-item .nav-link.active {
+  color: var(--color-primary) !important;
+}
+
+/* Desktop: transparent navbar at top of page */
+@media (min-width: 992px) {
+  #mainNav {
+    box-shadow: none;
+    background-color: transparent;
+  }
+  #mainNav .navbar-brand {
+    color: rgba(255, 255, 255, 0.85);
+  }
+  #mainNav .navbar-brand:hover {
+    color: #fff;
+  }
+  #mainNav .navbar-nav .nav-item .nav-link {
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0 1rem;
+  }
+  #mainNav .navbar-nav .nav-item .nav-link:hover {
+    color: #fff;
+  }
+  #mainNav .navbar-nav .nav-item .nav-link.active {
+    color: #fff !important;
+  }
+  #mainNav .navbar-nav .nav-item:last-child .nav-link {
+    padding-right: 0;
+  }
+
+  /* Scrolled / shrink state */
+  #mainNav.navbar-shrink {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    background-color: #fff;
+  }
+  #mainNav.navbar-shrink .navbar-brand {
+    color: var(--color-secondary);
+  }
+  #mainNav.navbar-shrink .navbar-brand:hover {
+    color: var(--color-primary);
+  }
+  #mainNav.navbar-shrink .navbar-nav .nav-item .nav-link {
+    color: var(--text-main);
+  }
+  #mainNav.navbar-shrink .navbar-nav .nav-item .nav-link:hover {
+    color: var(--color-primary);
+  }
+  #mainNav.navbar-shrink .navbar-nav .nav-item .nav-link.active {
+    color: var(--color-primary) !important;
+  }
+}
+
+/* ===== Masthead (Creative full-height hero) ===== */
+header.masthead {
+  padding-top: 10rem;
+  padding-bottom: calc(10rem - 4.5rem);
+  text-align: center;
+  color: #fff;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(var(--color-secondary-rgb), 0.8) 0%,
+      rgba(var(--color-primary-rgb), 0.85) 100%
+    ),
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%232F6DB5" width="1200" height="600"/><g opacity="0.12"><circle fill="%23F2A23A" cx="200" cy="300" r="80"/><circle fill="%236DBE8B" cx="600" cy="200" r="120"/><circle fill="%23F2A23A" cx="1000" cy="400" r="100"/></g></svg>');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-size: cover;
+}
+
+header.masthead h1,
+header.masthead .h1,
+header.masthead .masthead-heading {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  font-family: "Comic Relief", system-ui, sans-serif;
+  color: #fff;
+}
+
+header.masthead .masthead-subheading {
+  font-size: 1.5rem;
+  font-style: italic;
+  font-family: "Alan Sans", sans-serif;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+header.masthead .masthead-description {
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 992px) {
+  header.masthead {
+    height: 100vh;
+    min-height: 40rem;
+    padding-top: 4.5rem;
+    padding-bottom: 0;
+  }
+  header.masthead p,
+  header.masthead .masthead-description {
+    font-size: 1.15rem;
+  }
+  header.masthead h1,
+  header.masthead .h1,
+  header.masthead .masthead-heading {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  header.masthead h1,
+  header.masthead .h1,
+  header.masthead .masthead-heading {
+    font-size: 3.5rem;
+  }
+}
+
+/* ===== Masthead Logo ===== */
+.masthead-logo {
+  max-width: 320px;
+  width: 100%;
+  height: auto;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+}
+
+/* ===== Analysis Page Header ===== */
+.page-section-header {
+  padding: 10rem 0 3rem;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 100%
+  );
+}
+
+/* ===== Page Sections ===== */
+.page-section {
+  padding: 6rem 0;
+}
+
+.page-section h2.section-heading {
+  font-size: 2.5rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.page-section h3.section-subheading {
+  font-size: 1.1rem;
+  font-weight: 400;
+  font-style: italic;
+  font-family: "Alan Sans", sans-serif;
+  margin-bottom: 4rem;
+}
+
+/* ===== Features (Home) ===== */
+.feature-icon {
+  margin-bottom: 1rem;
+}
+
+.fa-stack {
+  margin-bottom: 1rem;
+}
+.fa-stack .fa-circle {
+  color: var(--color-primary);
+}
+
+/* ===== Step Cards (Home) ===== */
+.step-card {
+  background: var(--bg-card);
+  border-radius: 1rem;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  height: 100%;
+}
+.step-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.12);
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-family: "Comic Relief", system-ui, sans-serif;
+  margin-bottom: 1rem;
+}
+
+/* ===== Stat Explanation Cards (Home) ===== */
+.stat-explain-card {
+  background: var(--bg-card);
+  border-radius: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 0.15rem 0.5rem rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease;
+}
+.stat-explain-card:hover {
+  transform: translateX(5px);
+}
+.stat-explain-card h5 {
+  font-size: 1rem;
+  margin-bottom: 0.35rem;
+}
+.stat-explain-card p {
+  font-size: 0.9rem;
+  margin-bottom: 0;
+}
+
+/* ===== Analysis Page Cards ===== */
+.instruction-card {
+  border: none;
+  border-left: 4px solid var(--color-accent);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
+}
+.instruction-card .card-title {
+  font-family: "Comic Relief", system-ui, sans-serif;
+  font-weight: 700;
+}
+
+.upload-card {
+  border: 2px solid var(--border-light);
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+  border-radius: 0.75rem;
+}
+
+.controls-card {
+  border: 1px solid var(--border-light);
+  background-color: var(--bg-card);
+  box-shadow: 0 0.15rem 0.5rem rgba(0, 0, 0, 0.06);
+}
+
+.results-table-card {
+  border: none;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.results-table-card .card-header {
+  border-bottom: 2px solid var(--border-light);
+}
+
+/* ===== General Card ===== */
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-light);
+}
+
+/* ===== Tables ===== */
+.table-responsive {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.question-col {
+  max-width: 400px;
+  word-wrap: break-word;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/* ===== Legend ===== */
+.stats-legend {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 2;
+}
+
+/* ===== Results Group Animation ===== */
+.results-group {
+  animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Toggle Button Active State ===== */
+.toggle-table-btn {
+  transition: transform 0.2s ease;
+}
+.toggle-table-btn:hover {
+  transform: scale(1.1);
+}
+
+#toggleLegend.active {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--text-main);
+}
+
+/* ===== Footer ===== */
+.footer {
+  background-color: var(--color-secondary);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.footer-link {
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 0.3s ease;
+}
+.footer-link:hover {
+  color: var(--color-accent);
+}
+
+/* ===== Muted text ===== */
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* ===== Loading Spinner Color ===== */
+.fa-spinner {
+  color: var(--color-accent);
+}
+
+/* ===== Back to top ===== */
+#backToTop {
+  border-radius: 10rem;
+}
+
+/* ===== Loading spinner ===== */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== Responsive adjustments ===== */
+@media (max-width: 767.98px) {
+  header.masthead {
+    padding-top: 8rem;
+    padding-bottom: 4rem;
+    height: auto;
+    min-height: 0;
+  }
+  .page-section-header {
+    padding-top: 8rem;
+  }
+  header.masthead .masthead-heading {
+    font-size: 2.25rem;
+  }
+  .btn-xl {
+    padding: 1rem 1.75rem;
+    font-size: 0.85rem;
+  }
+  .page-section {
+    padding: 3rem 0;
+  }
+  .question-col {
+    max-width: 200px;
+  }
+}

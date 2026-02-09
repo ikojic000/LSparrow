@@ -1,14 +1,17 @@
-# CSV Statistics Calculator
+# LSparrow
 
-A Flask application for calculating statistics on Likert scale survey data from Google Forms.
+A Flask application for statistical analysis of Likert scale survey data from Google Forms.
 
 ## Project Structure
 
 ```
-DiplomskiCSVStatistika/
+LSparrow/
 ├── app/                          # Main application package
 │   ├── __init__.py               # Application factory
 │   ├── config.py                 # Configuration classes
+│   ├── errors/                   # Error handlers
+│   │   ├── __init__.py
+│   │   └── exceptions.py
 │   ├── main/                     # Main blueprint
 │   │   ├── __init__.py           # Blueprint initialization
 │   │   └── routes.py             # Route handlers
@@ -16,17 +19,25 @@ DiplomskiCSVStatistika/
 │   │   ├── __init__.py
 │   │   ├── statistics.py         # Statistical calculations
 │   │   └── csv_processor.py      # CSV file processing
+│   ├── static/                   # Static assets (CSS, JS, images)
 │   └── templates/                # Jinja2 templates
-│       └── index.html
+│       ├── base.html
+│       ├── home.html
+│       ├── index.html
+│       ├── analysis.html
+│       └── errors/               # Error page templates
 ├── run.py                        # Application entry point
+├── start.bat                     # Windows start script
 ├── requirements.txt              # Python dependencies
 ├── .env.example                  # Environment variables template
+├── .env                          # Local environment variables (not in git)
 └── README.md
 ```
 
 ## Setup
 
 1. Create a virtual environment:
+
    ```bash
    python -m venv venv
    venv\Scripts\activate  # Windows
@@ -34,11 +45,13 @@ DiplomskiCSVStatistika/
    ```
 
 2. Install dependencies:
+
    ```bash
    pip install -r requirements.txt
    ```
 
 3. Copy environment variables:
+
    ```bash
    copy .env.example .env  # Windows
    cp .env.example .env    # Linux/Mac
@@ -52,6 +65,7 @@ DiplomskiCSVStatistika/
 ## Production Deployment
 
 For production, use Gunicorn (Linux/Mac):
+
 ```bash
 gunicorn -w 4 -b 0.0.0.0:8000 "run:app"
 ```

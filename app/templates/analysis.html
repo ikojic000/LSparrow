@@ -1,0 +1,418 @@
+{% extends "base.html" %} {% block title %}LSparrow - Analiza{% endblock %} {%
+block content %}
+<!-- Page Header -->
+<section class="page-section-header">
+  <div class="container px-4 px-lg-5">
+    <div class="text-center">
+      <h2 class="section-heading text-uppercase text-white">
+        Statistička analiza
+      </h2>
+      <hr class="divider divider-light" />
+      <p class="text-white-75">
+        Učitajte CSV datoteku i dobijte detaljnu statističku analizu
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Upload Section -->
+<section class="page-section" id="upload-section">
+  <div class="container px-4 px-lg-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <!-- Instructions -->
+        <div class="card instruction-card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="fas fa-info-circle text-primary me-2"></i>Upute za
+              korištenje
+            </h5>
+            <ol class="mb-0">
+              <li>
+                Izvezite odgovore ankete iz Google Forms-a u
+                <strong>CSV formatu</strong>.
+              </li>
+              <li>
+                Kliknite gumb <em>"Odaberi datoteku"</em> i pronađite vašu CSV
+                datoteku.
+              </li>
+              <li>
+                Kliknite <em>"Učitaj i izračunaj"</em> za pokretanje statističke
+                analize.
+              </li>
+              <li>
+                Samo pitanja s odgovorima na
+                <strong>Likertovoj skali (1-5)</strong> će biti analizirana.
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Upload Form -->
+        <div class="card upload-card">
+          <div class="card-body p-4">
+            <form method="POST" enctype="multipart/form-data" id="uploadForm">
+              <div class="mb-3">
+                <label for="csv_file" class="form-label fw-bold">
+                  <i class="fas fa-file-csv me-1"></i> Odaberite CSV datoteku
+                </label>
+                <input
+                  type="file"
+                  class="form-control form-control-lg"
+                  id="csv_file"
+                  name="csv_file"
+                  accept=".csv"
+                  required />
+                <div class="form-text">
+                  Podržane su CSV datoteke izvezene iz Google Forms-a (max 16
+                  MB).
+                </div>
+              </div>
+              <div id="fileInfo" class="alert alert-info d-none mb-3">
+                <i class="fas fa-file me-2"></i>
+                <span id="fileName"></span>
+                <span class="ms-2 badge bg-secondary" id="fileSize"></span>
+              </div>
+              <button
+                type="submit"
+                class="btn btn-primary btn-xl text-uppercase w-100"
+                id="submitBtn">
+                <i class="fas fa-upload me-2"></i> Učitaj i izračunaj
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if error %}
+<!-- Error Alert -->
+<section class="py-0">
+  <div class="container px-4 px-lg-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div
+          class="alert alert-danger alert-dismissible fade show shadow-sm"
+          role="alert"
+          id="errorAlert">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          <strong>Greška:</strong> {{ error }}
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %} {% if results %}
+<!-- Results Section -->
+<section class="page-section bg-light" id="results-section">
+  <div class="container px-4 px-lg-5">
+    <!-- Results Header -->
+    <div class="text-center mb-4">
+      <h2 class="section-heading text-uppercase">Rezultati analize</h2>
+      <hr class="divider" />
+      <h3 class="section-subheading text-muted">
+        Pronađeno {{ results.overall|length }} pitanja s Likertovom skalom
+      </h3>
+    </div>
+
+    <!-- Controls Bar -->
+    <div class="row justify-content-center mb-4">
+      <div class="col-lg-12">
+        <div class="card controls-card">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-md-5">
+                <label for="groupingSelect" class="form-label fw-bold mb-0">
+                  <i class="fas fa-filter me-2 text-primary"></i>Grupiraj
+                  statistiku prema:
+                </label>
+              </div>
+              <div class="col-md-5">
+                <select class="form-select" id="groupingSelect">
+                  <option value="overall" selected>
+                    Ukupno (svi ispitanici)
+                  </option>
+                  {% for key, info in results.groupings.items() %}
+                  <option value="{{ key }}">
+                    {{ info.label }} ({{ info.column }})
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-2 text-end">
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  id="toggleLegend"
+                  title="Prikaži/sakrij legendu">
+                  <i class="fas fa-question-circle me-1"></i>Legenda
+                </button>
+              </div>
+            </div>
+            <!-- Collapsible Legend -->
+            <div id="legendPanel" class="mt-3" style="display: none">
+              <hr />
+              <div class="stats-legend">
+                <span class="badge bg-dark me-1">N</span> Broj ispitanika &nbsp;
+                <span class="badge bg-dark me-1">AS</span> Aritmetička sredina
+                &nbsp; <span class="badge bg-dark me-1">SD</span> Standardna
+                devijacija &nbsp;
+                <span class="badge bg-dark me-1">Ske</span> Asimetrija &nbsp;
+                <span class="badge bg-dark me-1">Kur</span> Zaobljenost &nbsp;
+                <span class="badge bg-dark me-1">Max D</span> K-S statistika
+                &nbsp; <span class="badge bg-dark me-1">K-S p</span> K-S
+                p-vrijednost
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overall Results -->
+    <div id="section-overall" class="results-group active">
+      <div class="row justify-content-center">
+        <div class="col-lg-12">
+          <div class="card results-table-card">
+            <div
+              class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">
+                <i class="fas fa-table me-2"></i>
+                Ukupna statistika ({{ results.overall|length }} pitanja)
+              </h5>
+              <button
+                class="btn btn-sm btn-outline-light toggle-table-btn"
+                data-target="overallTableBody">
+                <i class="fas fa-chevron-up"></i>
+              </button>
+            </div>
+            <div class="card-body" id="overallTableBody">
+              <div class="table-responsive">
+                <table
+                  class="table table-striped table-hover table-bordered align-middle">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>#</th>
+                      <th class="question-col">Pitanje</th>
+                      <th>N</th>
+                      <th>AS</th>
+                      <th>SD</th>
+                      <th>Medijan</th>
+                      <th>Ske</th>
+                      <th>Kur</th>
+                      <th>Max D</th>
+                      <th>K-S p</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for row in results.overall %}
+                    <tr class="result-row">
+                      <td>{{ loop.index }}</td>
+                      <td class="question-col">{{ row.question }}</td>
+                      <td>{{ row.N }}</td>
+                      <td>{{ row.AS }}</td>
+                      <td>{{ row.SD }}</td>
+                      <td>{{ row.Median }}</td>
+                      <td>{{ row.Ske }}</td>
+                      <td>{{ row.Kur }}</td>
+                      <td>{{ row['Max D'] }}</td>
+                      <td>{{ row['K-S p'] }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grouped Results -->
+    {% for group_key, group_info in results.groupings.items() %}
+    <div
+      id="section-{{ group_key }}"
+      class="results-group"
+      style="display: none">
+      <div class="row justify-content-center">
+        <div class="col-lg-12">
+          <div class="alert alert-info">
+            <i class="fas fa-layer-group me-2"></i>
+            <strong>Grupirano prema:</strong> {{ group_info.column }}
+            <br /><small
+              >Prikazana je zasebna statistika za svaku kategoriju: {{
+              group_info.label|lower }}</small
+            >
+          </div>
+
+          {% for group_value, group_stats in results.grouped[group_key].items()
+          %}
+          <div class="card results-table-card mb-4">
+            <div
+              class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">
+                <i class="fas fa-users me-2"></i>
+                {{ group_value }}
+                <span class="badge bg-light text-dark ms-2"
+                  >{{ group_stats|length }} pitanja</span
+                >
+              </h5>
+              <button
+                class="btn btn-sm btn-outline-light toggle-table-btn"
+                data-target="group-{{ group_key }}-{{ loop.index }}">
+                <i class="fas fa-chevron-up"></i>
+              </button>
+            </div>
+            <div class="card-body" id="group-{{ group_key }}-{{ loop.index }}">
+              <div class="table-responsive">
+                <table
+                  class="table table-striped table-hover table-bordered table-sm align-middle">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>#</th>
+                      <th class="question-col">Pitanje</th>
+                      <th>N</th>
+                      <th>AS</th>
+                      <th>SD</th>
+                      <th>Medijan</th>
+                      <th>Ske</th>
+                      <th>Kur</th>
+                      <th>Max D</th>
+                      <th>K-S p</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for row in group_stats %}
+                    <tr class="result-row">
+                      <td>{{ loop.index }}</td>
+                      <td class="question-col">{{ row.question }}</td>
+                      <td>{{ row.N }}</td>
+                      <td>{{ row.AS }}</td>
+                      <td>{{ row.SD }}</td>
+                      <td>{{ row.Median }}</td>
+                      <td>{{ row.Ske }}</td>
+                      <td>{{ row.Kur }}</td>
+                      <td>{{ row['Max D'] }}</td>
+                      <td>{{ row['K-S p'] }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+    <!-- Scroll to top button -->
+    <div class="text-center mt-4">
+      <button class="btn btn-outline-primary btn-lg" id="backToTop">
+        <i class="fas fa-arrow-up me-2"></i>Natrag na vrh
+      </button>
+    </div>
+  </div>
+</section>
+{% endif %} {% endblock %} {% block extra_js %}
+<script>
+  $(document).ready(function() {
+
+      // ===== File input preview =====
+      $('#csv_file').on('change', function() {
+          var file = this.files[0];
+          if (file) {
+              var sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+              $('#fileName').text(file.name);
+              $('#fileSize').text(sizeMB + ' MB');
+              $('#fileInfo').hide().removeClass('d-none').slideDown(300);
+          } else {
+              $('#fileInfo').slideUp(300, function() { $(this).addClass('d-none'); });
+          }
+      });
+
+      // ===== Form submit loading state =====
+      $('#uploadForm').on('submit', function() {
+          var $btn = $('#submitBtn');
+          $btn.prop('disabled', true);
+          $btn.html('<i class="fas fa-spinner fa-spin me-2"></i> Obrađujem...');
+      });
+
+      // ===== Grouping selector with slide animation =====
+      $('#groupingSelect').on('change', function() {
+          var selectedValue = $(this).val();
+
+          // Fade out current visible group
+          $('.results-group:visible').fadeOut(250, function() {
+              // Fade in the selected group
+              $('#section-' + selectedValue).fadeIn(400);
+          });
+      });
+
+      // ===== Toggle legend panel =====
+      $('#toggleLegend').on('click', function() {
+          $('#legendPanel').slideToggle(300);
+          $(this).toggleClass('active');
+      });
+
+      // ===== Collapse/expand table bodies =====
+      $(document).on('click', '.toggle-table-btn', function() {
+          var targetId = $(this).data('target');
+          var $target = $('#' + targetId);
+          var $icon = $(this).find('i');
+
+          $target.slideToggle(350, function() {
+              if ($target.is(':visible')) {
+                  $icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+              } else {
+                  $icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+              }
+          });
+      });
+
+      // ===== Animate result rows on load =====
+      {% if results %}
+      $('.results-group.active .result-row').each(function(index) {
+          $(this).css({ opacity: 0, transform: 'translateY(15px)' });
+          $(this).delay(index * 30).animate({ opacity: 1 }, 300, function() {
+              $(this).css('transform', 'translateY(0)');
+          });
+      });
+
+      // Smooth scroll to results after upload
+      $('html, body').animate({
+          scrollTop: $('#results-section').offset().top - 80
+      }, 600);
+      {% endif %}
+
+      // ===== Error alert auto-dismiss =====
+      {% if error %}
+      setTimeout(function() {
+          $('#errorAlert').fadeOut(500);
+      }, 8000);
+      {% endif %}
+
+      // ===== Back to top button =====
+      $('#backToTop').on('click', function() {
+          $('html, body').animate({ scrollTop: 0 }, 500);
+      });
+
+      // ===== Navbar shrink on scroll =====
+      $(window).on('scroll', function() {
+          var $nav = $('#mainNav');
+          if ($(window).scrollTop() > 50) {
+              $nav.addClass('navbar-shrink');
+          } else {
+              $nav.removeClass('navbar-shrink');
+          }
+      }).trigger('scroll');
+  });
+</script>
+{% endblock %}
