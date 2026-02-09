@@ -122,6 +122,74 @@ block content %}
       </h3>
     </div>
 
+    {% if ai_enabled %}
+    <!-- Store results as JSON for AI AJAX -->
+    <script id="analysisData" type="application/json">
+      {{ results | tojson }}
+    </script>
+    <!-- AI Analysis Button & Result -->
+    <div class="row justify-content-center mb-4">
+      <div class="col-lg-12">
+        <div class="card border-0 shadow-sm" id="aiCard">
+          <div
+            class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="fas fa-robot me-2"></i>AI interpretacija rezultata
+            </h5>
+            <button class="btn btn-sm btn-dark" id="aiAnalysisBtn">
+              <i class="fas fa-wand-magic-sparkles me-1"></i> AI Analiza
+            </button>
+          </div>
+          <!-- Spinner (hidden by default) -->
+          <div
+            class="card-body text-center py-4"
+            id="aiSpinner"
+            style="display: none">
+            <div class="spinner-border text-warning" role="status">
+              <span class="visually-hidden">Učitavanje...</span>
+            </div>
+            <p class="mt-2 mb-0 text-muted">Dohvaćam AI interpretaciju...</p>
+          </div>
+          <!-- AI Result (hidden by default) -->
+          <div class="card-body" id="aiResult" style="display: none">
+            <p
+              class="card-text mb-0"
+              id="aiResultText"
+              style="white-space: pre-line"></p>
+          </div>
+          <!-- AI Error (hidden by default) -->
+          <div class="card-body" id="aiError" style="display: none">
+            <div class="alert alert-danger mb-0">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              <span id="aiErrorText"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <!-- AI Disabled Notice -->
+    <div class="row justify-content-center mb-4">
+      <div class="col-lg-12">
+        <div class="card border-0 shadow-sm">
+          <div
+            class="card-header bg-secondary text-white d-flex align-items-center">
+            <h5 class="mb-0">
+              <i class="fas fa-robot me-2"></i>AI interpretacija rezultata
+            </h5>
+          </div>
+          <div class="card-body">
+            <p class="card-text mb-0 text-muted">
+              <i class="fas fa-info-circle me-1"></i>
+              AI analiza je trenutno onemogućena. Postavite
+              <code>GEMINI_AI_ENABLED=true</code> u .env datoteci za aktivaciju.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
     <!-- Controls Bar -->
     <div class="row justify-content-center mb-4">
       <div class="col-lg-12">
@@ -402,6 +470,48 @@ block content %}
       // ===== Back to top button =====
       $('#backToTop').on('click', function() {
           $('html, body').animate({ scrollTop: 0 }, 500);
+      });
+
+      // ===== AI Analysis AJAX =====
+      $('#aiAnalysisBtn').on('click', function() {
+          var $btn = $(this);
+          $btn.prop('disabled', true);
+          $btn.html('<i class="fas fa-spinner fa-spin me-1"></i> Učitavam...');
+
+          // Hide previous result/error, show spinner
+          $('#aiResult').hide();
+          $('#aiError').hide();
+          $('#aiSpinner').fadeIn(200);
+
+          // Read analysis data embedded in the page
+          var analysisData = JSON.parse($('#analysisData').text());
+
+          $.ajax({
+              url: '{{ url_for("main.ai_analysis") }}',
+              method: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify(analysisData),
+              success: function(data) {
+                  $('#aiSpinner').hide();
+                  if (data.interpretation) {
+                      $('#aiResultText').text(data.interpretation);
+                      $('#aiResult').fadeIn(300);
+                      $btn.hide();
+                  }
+              },
+              error: function(xhr) {
+                  $('#aiSpinner').hide();
+                  var msg = 'Došlo je do pogreške s AI analizom. Molimo pokušajte kasnije.';
+                  try {
+                      var resp = JSON.parse(xhr.responseText);
+                      if (resp.error) msg = resp.error;
+                  } catch(e) {}
+                  $('#aiErrorText').text(msg);
+                  $('#aiError').fadeIn(300);
+                  $btn.prop('disabled', false);
+                  $btn.html('<i class="fas fa-wand-magic-sparkles me-1"></i> AI Analiza');
+              }
+          });
       });
 
       // ===== Navbar shrink on scroll =====
