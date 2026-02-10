@@ -96,6 +96,58 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
             </form>
           </div>
         </div>
+
+        <!-- Column Selection Card (shown after file analysis via JS) -->
+        <div id="columnSelectionCard" class="card mt-4 d-none">
+          <div class="card-header bg-info text-white">
+            <h5 class="mb-0">
+              <i class="fas fa-layer-group me-2"></i>Odaberite stupce za
+              grupiranje
+            </h5>
+          </div>
+          <div class="card-body">
+            <p class="text-muted mb-3">
+              Odaberite stupce po kojima želite grupirati statističku analizu.
+              Ako ne odaberete nijedan stupac, izračunat će se samo ukupna
+              statistika.
+            </p>
+            <div id="columnCheckboxes"></div>
+            <hr />
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-muted small" id="selectedCount"
+                >0 od 0 odabrano</span
+              >
+              <div>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  id="selectAllBtn">
+                  <i class="fas fa-check-double me-1"></i>Odaberi sve
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary"
+                  id="deselectAllBtn">
+                  <i class="fas fa-times me-1"></i>Poništi sve
+                </button>
+              </div>
+            </div>
+            <div class="d-flex gap-2">
+              <button
+                type="button"
+                class="btn btn-primary btn-xl"
+                id="calculateBtn">
+                <i class="fas fa-calculator me-2"></i>Izračunaj statistiku
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-xl"
+                id="skipGroupingBtn">
+                <i class="fas fa-forward me-2"></i>Bez grupiranja
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -239,6 +291,7 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
       <div class="col-lg-12">
         <div class="card controls-card">
           <div class="card-body">
+            {% if results.groupings %}
             <div class="row align-items-center">
               <div class="col-md-5">
                 <label for="groupingSelect" class="form-label fw-bold mb-0">
@@ -267,6 +320,18 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
                 </button>
               </div>
             </div>
+            {% else %}
+            <div class="row align-items-center">
+              <div class="col text-end">
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  id="toggleLegend"
+                  title="Prikaži/sakrij legendu">
+                  <i class="fas fa-question-circle me-1"></i>Legenda
+                </button>
+              </div>
+            </div>
+            {% endif %}
             <!-- Collapsible Legend -->
             <div id="legendPanel" class="mt-3" style="display: none">
               <hr />
@@ -438,6 +503,8 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
   $(document).ready(function() {
 
       // ===== File input preview =====
+      var detectionDone = false;
+
       $('#csv_file').on('change', function() {
           var file = this.files[0];
           if (file) {
@@ -448,13 +515,120 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
           } else {
               $('#fileInfo').slideUp(300, 'linear', function() { $(this).addClass('d-none'); });
           }
+          // Reset detection state when file changes
+          if (detectionDone) {
+              detectionDone = false;
+              $('#columnSelectionCard').slideUp(300, 'linear');
+              $('input.hidden-group').remove();
+              $('#submitBtn').show().prop('disabled', false)
+                  .html('<i class="fas fa-upload me-2"></i> Učitaj i izračunaj');
+          }
       });
 
-      // ===== Form submit loading state =====
-      $('#uploadForm').on('submit', function() {
+      // ===== Form submit — detect groupable columns via AJAX =====
+      $('#uploadForm').on('submit', function(e) {
+          e.preventDefault();
+
+          var fileInput = $('#csv_file')[0];
+          if (!fileInput.files.length) return;
+
           var $btn = $('#submitBtn');
           $btn.prop('disabled', true);
-          $btn.html('<i class="fas fa-spinner fa-spin me-2"></i> Obrađujem...');
+          $btn.html('<i class="fas fa-spinner fa-spin me-2"></i> Analiziram stupce...');
+
+          var formData = new FormData();
+          formData.append('csv_file', fileInput.files[0]);
+
+          $.ajax({
+              url: '{{ url_for("main.detect_columns") }}',
+              method: 'POST',
+              data: formData,
+              processData: false,
+              contentType: false,
+              success: function(data) {
+                  detectionDone = true;
+                  if (data.columns && data.columns.length > 0) {
+                      showColumnSelection(data.columns);
+                      $btn.hide();
+                  } else {
+                      // No groupable columns — calculate overall only
+                      $btn.html('<i class="fas fa-spinner fa-spin me-2"></i> Obrađujem...');
+                      submitCalculation([]);
+                  }
+              },
+              error: function(xhr) {
+                  var msg = 'Greška pri analizi stupaca.';
+                  try { msg = JSON.parse(xhr.responseText).error; } catch(ex) {}
+                  var $alert = $('<div class="alert alert-danger alert-dismissible fade show mt-3">'
+                      + '<i class="fas fa-exclamation-triangle me-2"></i>' + $('<span>').text(msg).html()
+                      + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+                  $('.upload-card').after($alert);
+                  $btn.prop('disabled', false);
+                  $btn.html('<i class="fas fa-upload me-2"></i> Učitaj i izračunaj');
+              }
+          });
+      });
+
+      // ===== Column selection helpers =====
+      function showColumnSelection(columns) {
+          var $container = $('#columnCheckboxes');
+          $container.empty();
+
+          columns.forEach(function(col, index) {
+              var $div = $('<div class="form-check form-switch mb-2">');
+              var $input = $('<input class="form-check-input grouping-checkbox" type="checkbox">')
+                  .attr({ id: 'grp_' + index, value: col });
+              var $label = $('<label class="form-check-label">')
+                  .attr('for', 'grp_' + index).text(col);
+              $div.append($input).append($label);
+              $container.append($div);
+          });
+
+          updateSelectedCount();
+          $('#columnSelectionCard').hide().removeClass('d-none').slideDown(400, 'linear');
+          $('html, body').animate({ scrollTop: $('#columnSelectionCard').offset().top - 100 }, 400, 'linear');
+      }
+
+      function updateSelectedCount() {
+          var count = $('.grouping-checkbox:checked').length;
+          var total = $('.grouping-checkbox').length;
+          $('#selectedCount').text(count + ' od ' + total + ' odabrano');
+      }
+
+      $(document).on('change', '.grouping-checkbox', updateSelectedCount);
+
+      $('#selectAllBtn').on('click', function() {
+          $('.grouping-checkbox').prop('checked', true);
+          updateSelectedCount();
+      });
+
+      $('#deselectAllBtn').on('click', function() {
+          $('.grouping-checkbox').prop('checked', false);
+          updateSelectedCount();
+      });
+
+      function submitCalculation(selectedColumns) {
+          var $form = $('#uploadForm');
+          $form.find('input.hidden-group').remove();
+          selectedColumns.forEach(function(col) {
+              $form.append($('<input type="hidden" name="selected_groups" class="hidden-group">').val(col));
+          });
+          $('#calculateBtn').prop('disabled', true)
+              .html('<i class="fas fa-spinner fa-spin me-2"></i> Obrađujem...');
+          $('#skipGroupingBtn').prop('disabled', true);
+          $form[0].submit();
+      }
+
+      $('#calculateBtn').on('click', function() {
+          var selected = [];
+          $('.grouping-checkbox:checked').each(function() {
+              selected.push($(this).val());
+          });
+          submitCalculation(selected);
+      });
+
+      $('#skipGroupingBtn').on('click', function() {
+          submitCalculation([]);
       });
 
       // ===== Grouping selector with slide animation =====
@@ -491,8 +665,9 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
 
       // ===== Animate result rows on load =====
       {% if results %}
-      // Hide upload cards when results are displayed
+      // Hide upload cards and column selection when results are displayed
       $('.instruction-card, .upload-card').hide();
+      $('#columnSelectionCard').hide();
 
       $('.results-group.active .result-row').each(function(index) {
           $(this).css({ opacity: 0, transform: 'translateY(15px)' });
@@ -521,11 +696,14 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
 
       // ===== Reset / Load new data =====
       $('#resetBtn').on('click', function() {
+          detectionDone = false;
           $('#results-section').slideUp(400, 'linear');
+          $('#columnSelectionCard').slideUp(300, 'linear');
+          $('input.hidden-group').remove();
           $('.instruction-card, .upload-card').slideDown(400, 'linear');
           $('#uploadForm')[0].reset();
           $('#fileInfo').addClass('d-none');
-          $('#submitBtn').prop('disabled', false)
+          $('#submitBtn').show().prop('disabled', false)
               .html('<i class="fas fa-upload me-2"></i> Učitaj i izračunaj');
           $('html, body').animate({ scrollTop: $('#upload-section').offset().top - 80 }, 400, 'linear');
       });

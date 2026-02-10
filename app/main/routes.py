@@ -92,11 +92,9 @@ def analysis():
                 error = "Molimo učitajte CSV datoteku"
             else:
                 try:
-                    processor = CSVProcessor(
-                        grouping_columns=current_app.config["GROUPING_COLUMNS"],
-                        grouping_labels=current_app.config["GROUPING_LABELS"],
-                    )
-                    results = processor.process(file)
+                    selected_groups = request.form.getlist("selected_groups")
+                    processor = CSVProcessor()
+                    results = processor.process(file, selected_groups)
 
                     if not results["overall"]:
                         error = "Nisu pronađena pitanja s Likertovom skalom (1-5) u CSV datoteci"
@@ -117,6 +115,38 @@ def analysis():
         error=error,
         ai_enabled=current_app.config.get("GEMINI_AI_ENABLED", False),
     )
+
+
+@bp.route("/api/detect-columns", methods=["POST"])
+def detect_columns():
+    """
+    AJAX endpoint to detect groupable columns in an uploaded CSV file.
+
+    Returns JSON list of column names suitable for grouping.
+    """
+    if "csv_file" not in request.files:
+        return jsonify({"error": "Datoteka nije učitana"}), 400
+
+    file = request.files["csv_file"]
+    if file.filename == "" or not file.filename.endswith(".csv"):
+        return jsonify({"error": "Molimo učitajte CSV datoteku"}), 400
+
+    try:
+        processor = CSVProcessor()
+        columns = processor.detect_groupable_columns(file)
+        return jsonify({"columns": columns})
+    except UnsupportedEncodingError as e:
+        return jsonify({"error": str(e.message)}), 400
+    except AppException as e:
+        return jsonify({"error": str(e.message)}), 400
+    except Exception as e:
+        current_app.logger.error(f"Error detecting columns: {str(e)}")
+        return (
+            jsonify(
+                {"error": "Došlo je do neočekivane greške prilikom analize datoteke"}
+            ),
+            500,
+        )
 
 
 @bp.route("/api/ai-analysis", methods=["POST"])

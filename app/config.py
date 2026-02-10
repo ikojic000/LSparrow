@@ -17,19 +17,6 @@ class Config:
         "yes",
     )
 
-    # Grouping columns configuration for the survey
-    GROUPING_COLUMNS = {
-        "age": "Dobna skupina kojoj pripadate",
-        "experience": "Radno iskustvo u odgojno-obrazovnom sustavu",
-        "area": "Područje djelovanja tijekom posljednjih 10 godina rada",
-    }
-
-    GROUPING_LABELS = {
-        "age": "Dobna skupina",
-        "experience": "Radno iskustvo",
-        "area": "Područje djelovanja",
-    }
-
 
 class DevelopmentConfig(Config):
     """Development configuration."""
