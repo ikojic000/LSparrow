@@ -1,18 +1,27 @@
-{% extends "base.html" %} {% block title %}LSparrow - Analiza{% endblock %} {%
-block content %}
+{% extends "base.html" %} {# SEO: Unique page title for the analysis page #} {%
+block title %}Statistička analiza CSV podataka – LSparrow{% endblock %} {# SEO:
+Unique meta description for analysis page #} {% block meta_description
+%}Učitajte CSV datoteku iz Google Forms-a i dobijte deskriptivnu statistiku za
+pitanja na Likertovoj skali – aritmetička sredina, medijan, SD, K-S test i
+više.{% endblock %} {# SEO: Open Graph overrides for analysis page #} {% block
+og_title %}Statistička analiza CSV podataka – LSparrow{% endblock %} {% block
+og_description %}Učitajte CSV datoteku iz Google Forms-a i dobijte deskriptivnu
+statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
 <!-- Page Header -->
 <section class="page-section-header">
   <div class="container px-4 px-lg-5">
     <div class="text-center">
-      <h2 class="section-heading text-uppercase text-white">
+      <!-- SEO: Single h1 per page describing the page purpose -->
+      <h1 class="section-heading text-uppercase text-white">
         Statistička analiza
-      </h2>
+      </h1>
       <hr class="divider divider-light" />
       <p class="text-white-75">
         Učitajte CSV datoteku i dobijte detaljnu statističku analizu
       </p>
     </div>
   </div>
+  <!-- Decorative image: empty alt + aria-hidden is correct for non-informational images -->
   <img
     src="{{ url_for('static', filename='images/svg/peeking.svg') }}"
     alt=""

@@ -1,5 +1,13 @@
-{% extends "base.html" %} {% block title %}LSparrow - Početna{% endblock %} {%
-block content %}
+{% extends "base.html" %} {# SEO: Unique page title for the homepage #} {% block
+title %}LSparrow – Besplatna statistička analiza anketa | Likertova skala{%
+endblock %} {# SEO: Unique meta description for homepage #} {% block
+meta_description %}LSparrow – besplatni alat za analizu anketa na Likertovoj
+skali (1-5). Učitajte CSV iz Google Forms-a, dobijte statistiku, grupiranje i AI
+interpretaciju.{% endblock %} {# SEO: Open Graph overrides for homepage #} {%
+block og_title %}LSparrow – Besplatna statistička analiza anketa{% endblock %}
+{% block og_description %}Besplatni online alat za izračun deskriptivne
+statistike anketnih podataka na Likertovoj skali iz Google Forms-a.{% endblock
+%} {% block content %}
 <!-- Masthead -->
 <header class="masthead">
   <div class="container px-4 px-lg-5 h-100">
@@ -8,9 +16,12 @@ block content %}
       <div class="col-lg-8 align-self-end">
         <img
           src="{{ url_for('static', filename='images/svg/logo_1.svg') }}"
-          alt="LSparrow Logo"
+          alt="LSparrow logotip – alat za statističku analizu anketa"
           class="masthead-logo" />
-        <h1 class="text-white font-weight-bold text-uppercase">LSparrow</h1>
+        <!-- SEO: Single h1 per page, descriptive of site purpose -->
+        <h1 class="text-white font-weight-bold text-uppercase">
+          LSparrow – Statistička analiza anketa
+        </h1>
         <hr class="divider divider-light" />
       </div>
       <div class="col-lg-8 align-self-baseline">

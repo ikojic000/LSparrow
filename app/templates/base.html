@@ -5,11 +5,41 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- SEO: Unique meta description per page, with sensible default -->
     <meta
       name="description"
-      content="LSparrow - Statistical Analysis for Survey Data" />
+      content="{% block meta_description %}LSparrow – besplatni online alat za statističku analizu anketnih podataka na Likertovoj skali iz Google Forms-a. Deskriptivna statistika i grupiranje.{% endblock %}" />
     <meta name="author" content="MPDTech" />
-    <title>{% block title %}LSparrow{% endblock %}</title>
+    <!-- SEO: Allow search engine indexing and link following (overridden by error pages) -->
+    {% block meta_robots %}
+    <meta name="robots" content="index, follow" />
+    {% endblock %}
+    <!-- SEO: Canonical URL to avoid duplicate content issues -->
+    {% block canonical %}
+    <link
+      rel="canonical"
+      href="{{ request.url_root.rstrip('/') }}{{ request.path }}" />
+    {% endblock %}
+    <title>
+      {% block title %}LSparrow – Statistička analiza anketa{% endblock %}
+    </title>
+    <!-- SEO: Open Graph meta tags for social sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="LSparrow" />
+    <meta
+      property="og:title"
+      content="{% block og_title %}LSparrow – Statistička analiza anketa{% endblock %}" />
+    <meta
+      property="og:description"
+      content="{% block og_description %}Besplatni online alat za statističku analizu anketnih podataka na Likertovoj skali iz Google Forms-a.{% endblock %}" />
+    <meta
+      property="og:url"
+      content="{{ request.url_root.rstrip('/') }}{{ request.path }}" />
+    {% block og_image %}
+    <meta
+      property="og:image"
+      content="{{ url_for('static', filename='images/svg/logo_1.svg', _external=True) }}" />
+    {% endblock %}
     <!-- Favicon -->
     <link
       rel="icon"
@@ -46,9 +76,10 @@
       id="mainNav">
       <div class="container px-4 px-lg-5">
         <a class="navbar-brand" href="{{ url_for('main.index') }}">
+          <!-- SEO/Accessibility: Descriptive alt text for logo -->
           <img
             src="{{ url_for('static', filename='images/svg/logo_header_1.svg') }}"
-            alt="LSparrow" />
+            alt="LSparrow – Statistička analiza anketa" />
         </a>
         <button
           class="navbar-toggler navbar-toggler-right"
@@ -81,15 +112,17 @@
       </div>
     </nav>
 
-    {% block content %}{% endblock %}
+    <!-- SEO: <main> landmark wraps primary page content for accessibility and semantics -->
+    <main>{% block content %}{% endblock %}</main>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" role="contentinfo">
       <div class="container px-4 px-lg-5">
         <div class="text-center">
+          <!-- SEO/Accessibility: Descriptive alt text for footer logo -->
           <img
             src="{{ url_for('static', filename='images/svg/text_1.svg') }}"
-            alt="LSparrow"
+            alt="LSparrow – alat za statističku analizu"
             style="height: 150px; opacity: 0.7; margin-top: -26px" />
           <div
             class=""

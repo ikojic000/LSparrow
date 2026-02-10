@@ -2,7 +2,8 @@
 Main blueprint route handlers.
 """
 
-from flask import render_template, request, current_app, jsonify
+from flask import render_template, request, current_app, jsonify, Response, url_for
+from datetime import datetime
 
 from app.main import bp
 from app.services.csv_processor import CSVProcessor
@@ -19,6 +20,54 @@ from app.errors.exceptions import (
 def index():
     """Homepage — explains what the app does."""
     return render_template("home.html")
+
+
+# --- SEO: robots.txt and sitemap.xml routes ---
+
+
+@bp.route("/robots.txt")
+def robots_txt():
+    """Serve robots.txt for search engine crawlers."""
+    # SEO: Allow all user agents, reference sitemap location
+    sitemap_url = url_for("main.sitemap_xml", _external=True)
+    content = "User-agent: *\n" "Allow: /\n" f"\nSitemap: {sitemap_url}\n"
+    return Response(content, mimetype="text/plain")
+
+
+@bp.route("/sitemap.xml")
+def sitemap_xml():
+    """Generate and serve a valid XML sitemap for all public routes."""
+    # SEO: Include all publicly accessible pages
+    pages = []
+    # Static public routes with their change frequency and priority
+    routes_config = [
+        {"endpoint": "main.index", "changefreq": "weekly", "priority": "1.0"},
+        {"endpoint": "main.analysis", "changefreq": "monthly", "priority": "0.8"},
+    ]
+    lastmod = datetime.now().strftime("%Y-%m-%d")
+
+    for route in routes_config:
+        pages.append(
+            {
+                "loc": url_for(route["endpoint"], _external=True),
+                "lastmod": lastmod,
+                "changefreq": route["changefreq"],
+                "priority": route["priority"],
+            }
+        )
+
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    for page in pages:
+        xml += "  <url>\n"
+        xml += f"    <loc>{page['loc']}</loc>\n"
+        xml += f"    <lastmod>{page['lastmod']}</lastmod>\n"
+        xml += f"    <changefreq>{page['changefreq']}</changefreq>\n"
+        xml += f"    <priority>{page['priority']}</priority>\n"
+        xml += "  </url>\n"
+    xml += "</urlset>\n"
+
+    return Response(xml, mimetype="application/xml")
 
 
 @bp.route("/analysis", methods=["GET", "POST"])
