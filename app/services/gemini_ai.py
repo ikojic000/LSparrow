@@ -90,6 +90,10 @@ class GeminiAIService:
             "\nProvide a SHORT and CLEAR interpretation (max 5-6 sentences). "
             "Highlight which questions scored highest/lowest, whether responses "
             "are normally distributed, and any notable patterns. "
+            "Format your response as HTML using Bootstrap 5 classes for styling. "
+            "Use elements like <h6>, <p>, <ul>, <li>, <strong>, <span class='badge bg-...'>, "
+            "<span class='text-success'>, <span class='text-danger'>, etc. to make it visually clear. "
+            "Do NOT wrap the response in ```html code blocks. Return raw HTML only. "
             "Answer in the SAME LANGUAGE as the question text."
         )
 

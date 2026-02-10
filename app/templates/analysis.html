@@ -13,6 +13,11 @@ block content %}
       </p>
     </div>
   </div>
+  <img
+    src="{{ url_for('static', filename='images/svg/peeking.svg') }}"
+    alt=""
+    class="peeking-sparrow"
+    aria-hidden="true" />
 </section>
 
 <!-- Upload Section -->
@@ -127,8 +132,26 @@ block content %}
     <script id="analysisData" type="application/json">
       {{ results | tojson }}
     </script>
-    <!-- AI Analysis Button & Result -->
-    <div class="row justify-content-center mb-4">
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-end align-items-center gap-2 mb-4">
+      <button class="btn btn-outline-primary" id="resetBtn">
+        <i class="fas fa-redo me-2"></i>Učitaj nove podatke
+      </button>
+      <button
+        class="btn btn-ai-analyze rounded-circle p-3"
+        id="aiAnalysisBtn"
+        data-bs-toggle="popover"
+        data-bs-trigger="hover focus"
+        data-bs-content="AI interpretacija rezultata">
+        <i class="fas fa-wand-magic-sparkles"></i>
+      </button>
+    </div>
+
+    <!-- AI Analysis Card (hidden until button click) -->
+    <div
+      class="row justify-content-center mb-4"
+      id="aiCardWrapper"
+      style="display: none">
       <div class="col-lg-12">
         <div class="card border-0 shadow-sm" id="aiCard">
           <div
@@ -136,38 +159,50 @@ block content %}
             <h5 class="mb-0">
               <i class="fas fa-robot me-2"></i>AI interpretacija rezultata
             </h5>
-            <button class="btn btn-sm btn-dark" id="aiAnalysisBtn">
-              <i class="fas fa-wand-magic-sparkles me-1"></i> AI Analiza
+            <button
+              class="btn btn-sm btn-outline-dark rounded-circle border-0"
+              id="toggleAiBody"
+              title="Prikaži/sakrij">
+              <i class="fas fa-eye"></i>
             </button>
           </div>
-          <!-- Spinner (hidden by default) -->
-          <div
-            class="card-body text-center py-4"
-            id="aiSpinner"
-            style="display: none">
-            <div class="spinner-border text-warning" role="status">
-              <span class="visually-hidden">Učitavanje...</span>
+          <div id="aiCardBody">
+            <!-- Spinner -->
+            <div class="card-body text-center py-4" id="aiSpinner">
+              <div class="spinner-border text-warning" role="status">
+                <span class="visually-hidden">Učitavanje...</span>
+              </div>
+              <p class="mt-2 mb-0 text-muted">Dohvaćam AI interpretaciju...</p>
             </div>
-            <p class="mt-2 mb-0 text-muted">Dohvaćam AI interpretaciju...</p>
-          </div>
-          <!-- AI Result (hidden by default) -->
-          <div class="card-body" id="aiResult" style="display: none">
-            <p
-              class="card-text mb-0"
-              id="aiResultText"
-              style="white-space: pre-line"></p>
-          </div>
-          <!-- AI Error (hidden by default) -->
-          <div class="card-body" id="aiError" style="display: none">
-            <div class="alert alert-danger mb-0">
-              <i class="fas fa-exclamation-triangle me-2"></i>
-              <span id="aiErrorText"></span>
+            <!-- AI Result (hidden by default) -->
+            <div class="card-body" id="aiResult" style="display: none">
+              <div class="card-text mb-3" id="aiResultText"></div>
+              <div class="text-end">
+                <button
+                  class="btn btn-sm btn-outline-secondary"
+                  id="copyPromptBtn">
+                  <i class="fas fa-copy me-1"></i>Kopiraj AI upit
+                </button>
+              </div>
+            </div>
+            <!-- AI Error (hidden by default) -->
+            <div class="card-body" id="aiError" style="display: none">
+              <div class="alert alert-danger mb-0">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span id="aiErrorText"></span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
     {% else %}
+    <!-- Action Buttons -->
+    <div class="text-end mb-4">
+      <button class="btn btn-outline-primary" id="resetBtn">
+        <i class="fas fa-redo me-2"></i>Učitaj nove podatke
+      </button>
+    </div>
     <!-- AI Disabled Notice -->
     <div class="row justify-content-center mb-4">
       <div class="col-lg-12">
@@ -400,9 +435,9 @@ block content %}
               var sizeMB = (file.size / (1024 * 1024)).toFixed(2);
               $('#fileName').text(file.name);
               $('#fileSize').text(sizeMB + ' MB');
-              $('#fileInfo').hide().removeClass('d-none').slideDown(300);
+              $('#fileInfo').hide().removeClass('d-none').slideDown(300, 'linear');
           } else {
-              $('#fileInfo').slideUp(300, function() { $(this).addClass('d-none'); });
+              $('#fileInfo').slideUp(300, 'linear', function() { $(this).addClass('d-none'); });
           }
       });
 
@@ -418,15 +453,15 @@ block content %}
           var selectedValue = $(this).val();
 
           // Fade out current visible group
-          $('.results-group:visible').fadeOut(250, function() {
+          $('.results-group:visible').fadeOut(250, 'linear', function() {
               // Fade in the selected group
-              $('#section-' + selectedValue).fadeIn(400);
+              $('#section-' + selectedValue).fadeIn(400, 'linear');
           });
       });
 
       // ===== Toggle legend panel =====
       $('#toggleLegend').on('click', function() {
-          $('#legendPanel').slideToggle(300);
+          $('#legendPanel').slideToggle(300, 'linear');
           $(this).toggleClass('active');
       });
 
@@ -436,7 +471,7 @@ block content %}
           var $target = $('#' + targetId);
           var $icon = $(this).find('i');
 
-          $target.slideToggle(350, function() {
+          $target.slideToggle(350, 'linear', function() {
               if ($target.is(':visible')) {
                   $icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
               } else {
@@ -447,9 +482,12 @@ block content %}
 
       // ===== Animate result rows on load =====
       {% if results %}
+      // Hide upload cards when results are displayed
+      $('.instruction-card, .upload-card').hide();
+
       $('.results-group.active .result-row').each(function(index) {
           $(this).css({ opacity: 0, transform: 'translateY(15px)' });
-          $(this).delay(index * 30).animate({ opacity: 1 }, 300, function() {
+          $(this).delay(index * 30).animate({ opacity: 1 }, 300, 'linear', function() {
               $(this).css('transform', 'translateY(0)');
           });
       });
@@ -457,31 +495,47 @@ block content %}
       // Smooth scroll to results after upload
       $('html, body').animate({
           scrollTop: $('#results-section').offset().top - 80
-      }, 600);
+      }, 600, 'linear');
       {% endif %}
 
       // ===== Error alert auto-dismiss =====
       {% if error %}
       setTimeout(function() {
-          $('#errorAlert').fadeOut(500);
+          $('#errorAlert').fadeOut(500, 'linear');
       }, 8000);
       {% endif %}
 
       // ===== Back to top button =====
       $('#backToTop').on('click', function() {
-          $('html, body').animate({ scrollTop: 0 }, 500);
+          $('html, body').animate({ scrollTop: 0 }, 500, 'linear');
       });
+
+      // ===== Reset / Load new data =====
+      $('#resetBtn').on('click', function() {
+          $('#results-section').slideUp(400, 'linear');
+          $('.instruction-card, .upload-card').slideDown(400, 'linear');
+          $('#uploadForm')[0].reset();
+          $('#fileInfo').addClass('d-none');
+          $('#submitBtn').prop('disabled', false)
+              .html('<i class="fas fa-upload me-2"></i> Učitaj i izračunaj');
+          $('html, body').animate({ scrollTop: $('#upload-section').offset().top - 80 }, 400, 'linear');
+      });
+
+      // ===== Initialize Bootstrap popovers =====
+      var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+      popoverTriggerList.map(function (el) { return new bootstrap.Popover(el); });
 
       // ===== AI Analysis AJAX =====
       $('#aiAnalysisBtn').on('click', function() {
           var $btn = $(this);
           $btn.prop('disabled', true);
-          $btn.html('<i class="fas fa-spinner fa-spin me-1"></i> Učitavam...');
+          $btn.html('<i class="fas fa-spinner fa-spin"></i>');
 
-          // Hide previous result/error, show spinner
+          // Show card with spinner, hide previous result/error
           $('#aiResult').hide();
           $('#aiError').hide();
-          $('#aiSpinner').fadeIn(200);
+          $('#aiSpinner').show();
+          $('#aiCardWrapper').slideDown(350, 'linear');
 
           // Read analysis data embedded in the page
           var analysisData = JSON.parse($('#analysisData').text());
@@ -492,25 +546,79 @@ block content %}
               contentType: 'application/json',
               data: JSON.stringify(analysisData),
               success: function(data) {
-                  $('#aiSpinner').hide();
-                  if (data.interpretation) {
-                      $('#aiResultText').text(data.interpretation);
-                      $('#aiResult').fadeIn(300);
-                      $btn.hide();
-                  }
+                  $('#aiSpinner').slideUp(200, 'linear', function() {
+                      if (data.interpretation) {
+                          $('#aiResultText').html(data.interpretation);
+                          $('#aiResult').fadeIn(300, 'linear');
+                          $btn.fadeOut(300, 'linear');
+                      }
+                  });
               },
               error: function(xhr) {
-                  $('#aiSpinner').hide();
-                  var msg = 'Došlo je do pogreške s AI analizom. Molimo pokušajte kasnije.';
-                  try {
-                      var resp = JSON.parse(xhr.responseText);
-                      if (resp.error) msg = resp.error;
-                  } catch(e) {}
-                  $('#aiErrorText').text(msg);
-                  $('#aiError').fadeIn(300);
+                  $('#aiSpinner').slideUp(200, 'linear', function() {
+                      var msg = 'Došlo je do pogreške s AI analizom. Molimo pokušajte kasnije.';
+                      try {
+                          var resp = JSON.parse(xhr.responseText);
+                          if (resp.error) msg = resp.error;
+                      } catch(e) {}
+                      $('#aiErrorText').text(msg);
+                      $('#aiError').fadeIn(300, 'linear');
+                  });
                   $btn.prop('disabled', false);
-                  $btn.html('<i class="fas fa-wand-magic-sparkles me-1"></i> AI Analiza');
+                  $btn.html('<i class="fas fa-wand-magic-sparkles"></i>');
               }
+          });
+      });
+
+      // ===== Toggle AI card body =====
+      $('#toggleAiBody').on('click', function() {
+          var $icon = $(this).find('i');
+          $('#aiCardBody').slideToggle(300, 'linear', function() {
+              if ($(this).is(':visible')) {
+                  $icon.removeClass('fa-eye-slash').addClass('fa-eye');
+              } else {
+                  $icon.removeClass('fa-eye').addClass('fa-eye-slash');
+              }
+          });
+      });
+
+      // ===== Copy AI prompt to clipboard =====
+      $('#copyPromptBtn').on('click', function() {
+          var analysisData = JSON.parse($('#analysisData').text());
+          var statsJson = JSON.stringify(analysisData.overall, null, 2);
+
+          var prompt = 'You are a statistics expert. A user conducted a Likert-scale (1-5) survey. '
+              + 'Below are the calculated descriptive statistics for each question.\n\n'
+              + 'Statistical abbreviations:\n'
+              + '- N = number of respondents\n'
+              + '- AS = arithmetic mean\n'
+              + '- SD = standard deviation\n'
+              + '- Median = median value\n'
+              + '- Ske = skewness\n'
+              + '- Kur = kurtosis\n'
+              + '- Max D = Kolmogorov-Smirnov statistic\n'
+              + '- K-S p = Kolmogorov-Smirnov p-value\n\n'
+              + 'Overall statistics:\n' + statsJson + '\n';
+
+          if (analysisData.grouped && analysisData.groupings) {
+              var groupedJson = JSON.stringify(analysisData.grouped, null, 2);
+              prompt += '\nGrouped statistics by demographics:\n' + groupedJson + '\n';
+          }
+
+          prompt += '\nProvide a detailed and thorough interpretation. '
+              + 'Highlight which questions scored highest/lowest, whether responses '
+              + 'are normally distributed, and any notable patterns. '
+              + 'Answer in the SAME LANGUAGE as the question text.';
+
+          navigator.clipboard.writeText(prompt).then(function() {
+              var $btn = $('#copyPromptBtn');
+              var original = $btn.html();
+              $btn.html('<i class="fas fa-check me-1"></i>Kopirano!');
+              $btn.removeClass('btn-outline-secondary').addClass('btn-success');
+              setTimeout(function() {
+                  $btn.html(original);
+                  $btn.removeClass('btn-success').addClass('btn-outline-secondary');
+              }, 2000);
           });
       });
 

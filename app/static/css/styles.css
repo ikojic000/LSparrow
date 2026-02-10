@@ -338,6 +338,21 @@ header.masthead .masthead-description {
     var(--color-primary) 0%,
     var(--color-secondary) 100%
   );
+  position: relative;
+  overflow: visible;
+  z-index: 1;
+}
+
+.peeking-sparrow {
+  position: absolute;
+  bottom: 36px;
+  left: 70%;
+  transform: translate(-50%, 55%);
+  width: 300px;
+  height: auto;
+  z-index: 2;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
 }
 
 /* ===== Page Sections ===== */
@@ -541,6 +556,38 @@ thead th {
   color: var(--color-accent);
 }
 
+/* ===== AI Analyze Button ===== */
+.btn-ai-analyze {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.65rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+  background: var(--color-accent);
+  border: none;
+  border-radius: 10rem;
+  box-shadow: 0 4px 14px rgba(var(--color-accent-rgb), 0.4);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    background-color 0.2s;
+}
+.btn-ai-analyze:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(var(--color-accent-rgb), 0.55);
+  background: #e69530;
+  color: #fff;
+}
+.btn-ai-analyze:active {
+  transform: translateY(0);
+}
+.btn-ai-analyze:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* ===== Back to top ===== */
 #backToTop {
   border-radius: 10rem;
@@ -566,6 +613,10 @@ thead th {
   }
   .page-section-header {
     padding-top: 8rem;
+  }
+  .peeking-sparrow {
+    width: 250px;
+    bottom: 30px;
   }
   header.masthead .masthead-heading {
     font-size: 2.25rem;
