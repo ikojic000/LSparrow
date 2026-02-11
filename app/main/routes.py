@@ -175,7 +175,8 @@ def ai_analysis():
         )
 
     try:
-        ai_service = GeminiAIService(api_key)
+        model = current_app.config.get("GEMINI_MODEL", "")
+        ai_service = GeminiAIService(api_key, model=model)
         interpretation = ai_service.interpret_results(
             overall_stats=data["overall"],
             grouped_stats=data.get("grouped"),

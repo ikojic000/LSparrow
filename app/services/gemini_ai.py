@@ -15,16 +15,18 @@ class GeminiAIService:
     for interpretation and explanation.
     """
 
-    MODEL = "gemini-2.5-flash"
+    DEFAULT_MODEL = "gemini-2.5-flash"
 
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str, model: str = ""):
         """
         Initialize the Gemini AI service.
 
         Args:
             api_key: Google Gemini API key.
+            model: Gemini model name. Falls back to DEFAULT_MODEL if empty.
         """
         self.client = genai.Client(api_key=api_key)
+        self.model = model or self.DEFAULT_MODEL
 
     def interpret_results(
         self,
@@ -47,7 +49,7 @@ class GeminiAIService:
 
         try:
             response = self.client.models.generate_content(
-                model=self.MODEL,
+                model=self.model,
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     temperature=0.3,
