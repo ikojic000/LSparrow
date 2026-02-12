@@ -112,3 +112,4 @@ Thumbs.db
 *.csv
 !example.csv
 themeExamples/
+.github/
