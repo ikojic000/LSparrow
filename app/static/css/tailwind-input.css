@@ -1,0 +1,16 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities) prefix(tw) source("../../templates");
+
+/* ===== LSparrow custom theme colors ===== */
+@theme {
+  --color-ls-blue: #2f6db5;
+  --color-ls-blue-dark: #245a96;
+  --color-ls-brown: #6b3f2a;
+  --color-ls-gold: #f2a23a;
+  --color-ls-success: #6dbe8b;
+  --color-ls-danger: #e96a5a;
+  --color-ls-bg: #fafaf8;
+  --color-ls-text: #2e2e2e;
+  --color-ls-muted: #7a7a7a;
+}

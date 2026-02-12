@@ -113,3 +113,7 @@ Thumbs.db
 !example.csv
 themeExamples/
 .github/
+
+# Node / Tailwind
+node_modules/
+package-lock.json

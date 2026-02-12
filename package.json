@@ -1,0 +1,17 @@
+{
+  "name": "lsparrow",
+  "version": "1.0.0",
+  "description": "A Flask application for statistical analysis of Likert scale survey data from Google Forms.",
+  "main": "index.js",
+  "scripts": {
+    "tw:build": "tailwindcss -i app/static/css/tailwind-input.css -o app/static/css/tailwind-output.css --minify",
+    "tw:watch": "tailwindcss -i app/static/css/tailwind-input.css -o app/static/css/tailwind-output.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.18",
+    "tailwindcss": "^4.1.18"
+  }
+}
