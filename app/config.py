@@ -12,6 +12,13 @@ class Config:
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
     GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
     GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+    GEMINI_FALLBACK_MODELS = [
+        m.strip()
+        for m in os.environ.get(
+            "GEMINI_FALLBACK_MODELS", "gemini-2.5-flash,gemini-2.5-flash-lite"
+        ).split(",")
+        if m.strip()
+    ]
     GEMINI_AI_ENABLED = os.environ.get("GEMINI_AI_ENABLED", "true").lower() in (
         "true",
         "1",

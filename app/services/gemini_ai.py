@@ -15,18 +15,28 @@ class GeminiAIService:
     for interpretation and explanation.
     """
 
-    DEFAULT_MODEL = "gemini-2.5-flash"
+    DEFAULT_MODEL = "gemini-3-flash-preview"
 
-    def __init__(self, api_key: str, model: str = ""):
+    def __init__(
+        self, api_key: str, model: str = "", fallback_models: Optional[List[str]] = None
+    ):
         """
         Initialize the Gemini AI service.
 
         Args:
             api_key: Google Gemini API key.
             model: Gemini model name. Falls back to DEFAULT_MODEL if empty.
+            fallback_models: Optional list of fallback models for rate-limit retries.
         """
         self.client = genai.Client(api_key=api_key)
         self.model = model or self.DEFAULT_MODEL
+        self.fallback_models = (
+            fallback_models
+            if fallback_models is not None
+            else self.DEFAULT_FALLBACK_MODELS
+        )
+
+    DEFAULT_FALLBACK_MODELS = ["gemini-2.5-flash", "gemini-2.5-flash-lite"]
 
     def interpret_results(
         self,
@@ -36,6 +46,7 @@ class GeminiAIService:
     ) -> str:
         """
         Send statistical results to Gemini and get a plain-language interpretation.
+        Falls back to alternative models on 429 / RESOURCE_EXHAUSTED errors.
 
         Args:
             overall_stats: List of per-question statistics dictionaries.
@@ -47,18 +58,33 @@ class GeminiAIService:
         """
         prompt = self._build_prompt(overall_stats, grouped_stats, groupings_info)
 
-        try:
-            response = self.client.models.generate_content(
-                model=self.model,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=0.3,
-                    max_output_tokens=4096,
-                ),
-            )
-            return response.text
-        except Exception as e:
-            return f"AI analiza nije dostupna: {str(e)}"
+        models_to_try = [self.model] + [
+            m for m in self.fallback_models if m != self.model
+        ]
+
+        for model in models_to_try:
+            try:
+                response = self.client.models.generate_content(
+                    model=model,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        temperature=0.3,
+                        max_output_tokens=4096,
+                    ),
+                )
+                return response.text
+            except Exception as e:
+                if self._is_resource_exhausted(e):
+                    continue
+                return f"AI analiza nije dostupna: {str(e)}"
+
+        return "AI analiza nije dostupna, pokušajte kasnije."
+
+    @staticmethod
+    def _is_resource_exhausted(exc: Exception) -> bool:
+        """Check if the exception is a 429 / RESOURCE_EXHAUSTED error."""
+        exc_str = str(exc).lower()
+        return "429" in exc_str or "resource_exhausted" in exc_str
 
     def _build_prompt(
         self,

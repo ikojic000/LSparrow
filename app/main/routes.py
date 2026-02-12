@@ -176,7 +176,8 @@ def ai_analysis():
 
     try:
         model = current_app.config.get("GEMINI_MODEL", "")
-        ai_service = GeminiAIService(api_key, model=model)
+        fallback_models = current_app.config.get("GEMINI_FALLBACK_MODELS", [])
+        ai_service = GeminiAIService(api_key, model=model, fallback_models=fallback_models)
         interpretation = ai_service.interpret_results(
             overall_stats=data["overall"],
             grouped_stats=data.get("grouped"),
