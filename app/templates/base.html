@@ -107,7 +107,7 @@
               style="height: 150px" />
           </a>
           <!-- Desktop navigation -->
-          <div class="hidden md:flex items-center gap-10">
+          <div class="hidden lg:flex items-center gap-10">
             <a
               href="{{ url_for('main.index') }}"
               class="nav-link-desktop {% if request.endpoint == 'main.index' %}active{% endif %}"
@@ -129,7 +129,7 @@
             </button>
             <button
               id="navToggle"
-              class="sm:flex md:hidden p-2 rounded-lg hover:bg-black/5 transition"
+              class="lg:hidden p-2 rounded-lg hover:bg-black/5 transition"
               aria-label="Otvori navigaciju">
               <i class="fas fa-bars text-xl" id="navToggleIcon"></i>
             </button>
@@ -138,7 +138,7 @@
         <!-- Mobile menu -->
         <div
           id="mobileMenu"
-          class="sm:flex md:hidden hidden pb-4 border-t border-ls-border">
+          class="lg:hidden hidden pb-4 border-t border-ls-border">
           <a
             href="{{ url_for('main.index') }}"
             class="block py-3 px-2 font-semibold text-sm uppercase tracking-wider {% if request.endpoint == 'main.index' %}text-ls-blue{% else %}text-ls-muted hover:text-ls-blue{% endif %} transition-colors"
