@@ -12,13 +12,11 @@ window.addEventListener("DOMContentLoaded", function () {
   function updateDarkIcons() {
     var icon = isDark() ? "fa-sun" : "fa-moon";
     var remove = isDark() ? "fa-moon" : "fa-sun";
-    ["darkModeIcon", "darkModeIconMobile"].forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) {
-        el.classList.remove(remove);
-        el.classList.add(icon);
-      }
-    });
+    var el = document.getElementById("darkModeIcon");
+    if (el) {
+      el.classList.remove(remove);
+      el.classList.add(icon);
+    }
   }
 
   function toggleDarkMode() {
@@ -32,9 +30,7 @@ window.addEventListener("DOMContentLoaded", function () {
   updateDarkIcons();
 
   var dmToggle = document.getElementById("darkModeToggle");
-  var dmToggleMobile = document.getElementById("darkModeToggleMobile");
   if (dmToggle) dmToggle.addEventListener("click", toggleDarkMode);
-  if (dmToggleMobile) dmToggleMobile.addEventListener("click", toggleDarkMode);
 
   // ===== Mobile nav toggle =====
   var navToggle = document.getElementById("navToggle");
