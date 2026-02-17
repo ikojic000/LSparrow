@@ -117,3 +117,6 @@ themeExamples/
 # Node / Tailwind
 node_modules/
 package-lock.json
+
+# Ignore local start script
+start.bat
