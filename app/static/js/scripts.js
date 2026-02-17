@@ -1,47 +1,82 @@
 /*!
  * LSparrow - Core Scripts
- * Based on Start Bootstrap Creative theme
+ * Modern Tailwind-based design
  */
 
 window.addEventListener("DOMContentLoaded", function () {
-  // Navbar shrink function
-  var navbarShrink = function () {
-    const navbarCollapsible = document.body.querySelector("#mainNav");
-    if (!navbarCollapsible) {
-      return;
-    }
-    if (window.scrollY === 0) {
-      navbarCollapsible.classList.remove("navbar-shrink");
-    } else {
-      navbarCollapsible.classList.add("navbar-shrink");
-    }
-  };
+  // ===== Dark Mode Toggle =====
+  function isDark() {
+    return document.documentElement.classList.contains("dark");
+  }
 
-  // Shrink the navbar
-  navbarShrink();
-
-  // Shrink the navbar when page is scrolled
-  document.addEventListener("scroll", navbarShrink);
-
-  // Activate Bootstrap scrollspy on the main nav element
-  const mainNav = document.body.querySelector("#mainNav");
-  if (mainNav) {
-    new bootstrap.ScrollSpy(document.body, {
-      target: "#mainNav",
-      rootMargin: "0px 0px -40%",
+  function updateDarkIcons() {
+    var icon = isDark() ? "fa-sun" : "fa-moon";
+    var remove = isDark() ? "fa-moon" : "fa-sun";
+    ["darkModeIcon", "darkModeIconMobile"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.classList.remove(remove);
+        el.classList.add(icon);
+      }
     });
   }
 
-  // Collapse responsive navbar when toggler is visible
-  const navbarToggler = document.body.querySelector(".navbar-toggler");
-  const responsiveNavItems = [].slice.call(
-    document.querySelectorAll("#navbarResponsive .nav-link"),
-  );
-  responsiveNavItems.map(function (responsiveNavItem) {
-    responsiveNavItem.addEventListener("click", function () {
-      if (window.getComputedStyle(navbarToggler).display !== "none") {
-        navbarToggler.click();
+  function toggleDarkMode() {
+    var html = document.documentElement;
+    html.classList.toggle("dark");
+    localStorage.setItem("ls-theme", isDark() ? "dark" : "light");
+    updateDarkIcons();
+  }
+
+  // Set initial icon state
+  updateDarkIcons();
+
+  var dmToggle = document.getElementById("darkModeToggle");
+  var dmToggleMobile = document.getElementById("darkModeToggleMobile");
+  if (dmToggle) dmToggle.addEventListener("click", toggleDarkMode);
+  if (dmToggleMobile) dmToggleMobile.addEventListener("click", toggleDarkMode);
+
+  // ===== Mobile nav toggle =====
+  var navToggle = document.getElementById("navToggle");
+  var mobileMenu = document.getElementById("mobileMenu");
+  var navToggleIcon = document.getElementById("navToggleIcon");
+
+  if (navToggle && mobileMenu) {
+    navToggle.addEventListener("click", function () {
+      mobileMenu.classList.toggle("hidden");
+      if (navToggleIcon) {
+        navToggleIcon.classList.toggle("fa-bars");
+        navToggleIcon.classList.toggle("fa-times");
       }
     });
-  });
+    // Close mobile menu on link click
+    mobileMenu.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", function () {
+        mobileMenu.classList.add("hidden");
+        if (navToggleIcon) {
+          navToggleIcon.classList.add("fa-bars");
+          navToggleIcon.classList.remove("fa-times");
+        }
+      });
+    });
+  }
+
+  // ===== Navbar scroll behavior =====
+  var mainNav = document.getElementById("mainNav");
+  var hasHero = document.querySelector(".hero-gradient");
+
+  function updateNav() {
+    if (!mainNav) return;
+    if (hasHero) {
+      // Home page: transparent at top, frosted glass when scrolled
+      if (window.scrollY < 50) {
+        mainNav.classList.add("nav-transparent");
+      } else {
+        mainNav.classList.remove("nav-transparent");
+      }
+    }
+  }
+
+  updateNav();
+  document.addEventListener("scroll", updateNav);
 });

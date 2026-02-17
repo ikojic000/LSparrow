@@ -1,34 +1,31 @@
-{% extends "base.html" %} {% block title %}Greška {{ code }}{% endblock %} {#
-SEO: Prevent search engines from indexing error pages #} {% block meta_robots
-%}<meta name="robots" content="noindex, nofollow" />{% endblock %} {% block
-content %}
-<section class="page-section-header">
-  <div class="container">
-    <div class="text-center">
-      <h2
-        class="section-heading text-uppercase text-white"
-        style="font-size: 6rem">
-        {{ code }}
-      </h2>
-    </div>
+{% extends "base.html" %} {% block title %}Greška {{ code }}{% endblock %} {%
+block meta_robots %}<meta name="robots" content="noindex, nofollow" />{%
+endblock %} {% block content %}
+<!-- Error Header -->
+<section class="page-header-gradient relative overflow-visible pt-36 pb-12">
+  <div class="max-w-7xl mx-auto px-4 lg:px-8 text-center">
+    <h2 class="text-7xl lg:text-9xl font-heading font-bold text-white">
+      {{ code }}
+    </h2>
   </div>
 </section>
-<section class="page-section">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-6 text-center">
-        <div class="mb-4">
-          <i class="fas {{ icon }} fa-4x" style="color: {{ color }};"></i>
-        </div>
-        <h3 class="mb-3">{{ title }}</h3>
-        <p class="text-muted mb-4">{{ message }}</p>
-        <a
-          href="{{ url_for('main.index') }}"
-          class="btn btn-primary btn-xl text-uppercase">
-          <i class="fas fa-home me-2"></i>Početna stranica
-        </a>
-      </div>
+
+<!-- Error Details -->
+<section class="py-20 dark:bg-ls-dark-bg">
+  <div class="max-w-lg mx-auto px-4 lg:px-8 text-center">
+    <div class="mb-6">
+      <i class="fas {{ icon }} text-5xl" style="color: {{ color }};"></i>
     </div>
+    <h3
+      class="text-2xl font-heading font-bold text-slate-800 dark:text-slate-100 mb-3">
+      {{ title }}
+    </h3>
+    <p class="text-ls-muted dark:text-ls-dark-muted mb-8">{{ message }}</p>
+    <a
+      href="{{ url_for('main.index') }}"
+      class="inline-flex items-center gap-2 bg-ls-blue text-white px-8 py-4 rounded-xl font-bold text-sm tracking-wider hover:bg-blue-700 transition-all shadow-sm">
+      <i class="fas fa-home"></i>Početna stranica
+    </a>
   </div>
 </section>
 {% endblock %}

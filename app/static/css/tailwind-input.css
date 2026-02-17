@@ -1,16 +1,214 @@
 @layer theme, base, components, utilities;
 @import "tailwindcss/theme" layer(theme);
-@import "tailwindcss/utilities" layer(utilities) prefix(tw) source("../../templates");
+@import "tailwindcss/utilities" layer(utilities) source("../../templates");
 
-/* ===== LSparrow custom theme colors ===== */
+/* Dark mode: class-based strategy */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ==========================================================
+   LSparrow – Professional Academic SaaS Theme
+   ========================================================== */
+
 @theme {
+  /* ===== Brand Primary (Blue-driven) ===== */
+  --color-ls-primary: #2f6db5;
+  --color-ls-primary-dark: #245a96;
+  --color-ls-primary-light: #e8f1fa;
+
+  /* ===== Convenience Aliases (used in templates) ===== */
   --color-ls-blue: #2f6db5;
-  --color-ls-blue-dark: #245a96;
-  --color-ls-brown: #6b3f2a;
+  --color-ls-blue-light: #ebf2fa;
+
+  /* ===== Warm Accent (use sparingly) ===== */
+  --color-ls-accent: #6b3f2a;
+  --color-ls-accent-soft: #f3e9e3;
+  --color-ls-brown: #334155; /* Dark slate – replaces brown for a professional look */
   --color-ls-gold: #f2a23a;
-  --color-ls-success: #6dbe8b;
-  --color-ls-danger: #e96a5a;
-  --color-ls-bg: #fafaf8;
-  --color-ls-text: #2e2e2e;
-  --color-ls-muted: #7a7a7a;
+  --color-ls-gold-light: #fef7e8;
+
+  /* ===== Semantic Colors ===== */
+  --color-ls-success: #3f8f5c;
+  --color-ls-success-light: #eaf6ef;
+
+  --color-ls-danger: #c45b5b;
+  --color-ls-danger-light: #fceaea;
+
+  --color-ls-warning: #d4a63f;
+  --color-ls-warning-light: #fdf6e3;
+
+  /* ===== Background System ===== */
+  --color-ls-bg: #f8fafc; /* Page background */
+  --color-ls-surface: #ffffff; /* Cards */
+  --color-ls-card: #ffffff; /* Alias for surface */
+  --color-ls-section: #f1f5f9; /* Subtle sections */
+
+  /* ===== Borders ===== */
+  --color-ls-border: #e2e8f0;
+
+  /* ===== Typography ===== */
+  --color-ls-text: #1e293b;
+  --color-ls-muted: #64748b;
+  --color-ls-text-muted: #64748b;
+
+  /* ===== Focus Ring ===== */
+  --color-ls-ring: #2f6db5;
+
+  /* ===== Dark Mode ===== */
+  --color-ls-dark-bg: #0f172a;
+  --color-ls-dark-surface: #1e293b;
+  --color-ls-dark-card: #1e293b;
+  --color-ls-dark-section: #162032;
+  --color-ls-dark-border: #334155;
+  --color-ls-dark-text: #e2e8f0;
+  --color-ls-dark-muted: #94a3b8;
+  --color-ls-dark-heading: #f1f5f9;
+}
+
+/* ==========================================================
+   BASE STYLING
+   ========================================================== */
+
+@layer base {
+  body {
+    @apply bg-[var(--color-ls-bg)] text-[var(--color-ls-text)] antialiased;
+    @apply dark:bg-[var(--color-ls-dark-bg)] dark:text-[var(--color-ls-dark-text)];
+  }
+
+  h1 {
+    @apply text-3xl md:text-4xl font-semibold tracking-tight;
+    @apply dark:text-[var(--color-ls-dark-heading)];
+  }
+
+  h2 {
+    @apply text-2xl font-semibold tracking-tight;
+    @apply dark:text-[var(--color-ls-dark-heading)];
+  }
+
+  h3 {
+    @apply text-xl font-semibold;
+    @apply dark:text-[var(--color-ls-dark-heading)];
+  }
+
+  p {
+    @apply text-[var(--color-ls-text-muted)];
+    @apply dark:text-[var(--color-ls-dark-muted)];
+  }
+
+  a {
+    @apply text-[var(--color-ls-primary)] hover:text-[var(--color-ls-primary-dark)] transition;
+  }
+}
+
+/* ==========================================================
+   COMPONENT SYSTEM
+   ========================================================== */
+
+@layer components {
+  /* ---------- Card ---------- */
+  .card {
+    @apply bg-[var(--color-ls-surface)]
+           rounded-xl
+           border border-[var(--color-ls-border)]
+           shadow-sm
+           p-6;
+    @apply dark:bg-[var(--color-ls-dark-card)] dark:border-[var(--color-ls-dark-border)];
+  }
+
+  .card-section {
+    @apply bg-[var(--color-ls-section)]
+           rounded-xl
+           border border-[var(--color-ls-border)]
+           p-6;
+    @apply dark:bg-[var(--color-ls-dark-section)] dark:border-[var(--color-ls-dark-border)];
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn-primary {
+    @apply bg-[var(--color-ls-primary)]
+           text-white
+           rounded-lg
+           px-4 py-2
+           shadow-sm
+           hover:bg-[var(--color-ls-primary-dark)]
+           transition
+           focus:outline-none
+           focus:ring-2
+           focus:ring-[var(--color-ls-ring)]
+           focus:ring-offset-1;
+  }
+
+  .btn-secondary {
+    @apply bg-white
+           text-[var(--color-ls-text)]
+           border border-[var(--color-ls-border)]
+           rounded-lg
+           px-4 py-2
+           shadow-sm
+           hover:bg-[var(--color-ls-section)]
+           transition;
+    @apply dark:bg-[var(--color-ls-dark-surface)] dark:text-[var(--color-ls-dark-text)] dark:border-[var(--color-ls-dark-border)] dark:hover:bg-[var(--color-ls-dark-section)];
+  }
+
+  /* ---------- Inputs ---------- */
+  .input-field {
+    @apply w-full
+           rounded-xl
+           border border-[var(--color-ls-border)]
+           px-4 py-2.5
+           bg-white
+           text-sm
+           focus:outline-none
+           focus:ring-2
+           focus:ring-[var(--color-ls-ring)]
+           focus:border-[var(--color-ls-primary)]
+           transition;
+    @apply dark:bg-[var(--color-ls-dark-surface)] dark:border-[var(--color-ls-dark-border)] dark:text-[var(--color-ls-dark-text)];
+  }
+
+  /* ---------- Table ---------- */
+  .table-modern {
+    @apply w-full
+           border-collapse
+           rounded-xl
+           overflow-hidden;
+  }
+
+  .table-modern thead {
+    @apply bg-[var(--color-ls-section)];
+    @apply dark:bg-[var(--color-ls-dark-section)];
+  }
+
+  .table-modern th {
+    @apply text-left
+           text-xs
+           font-semibold
+           uppercase
+           tracking-wider
+           text-[var(--color-ls-text-muted)]
+           px-4 py-3
+           border-b border-[var(--color-ls-border)];
+    @apply dark:text-[var(--color-ls-dark-muted)] dark:border-[var(--color-ls-dark-border)];
+  }
+
+  .table-modern td {
+    @apply px-4 py-3
+           border-b border-[var(--color-ls-border)]
+           text-sm;
+    @apply dark:border-[var(--color-ls-dark-border)] dark:text-[var(--color-ls-dark-text)];
+  }
+
+  .table-modern tbody tr:hover {
+    @apply bg-[var(--color-ls-primary-light)];
+    @apply dark:bg-[#1a3a5c];
+  }
+
+  /* ---------- AI Insight Block ---------- */
+  .ai-insight {
+    @apply bg-[var(--color-ls-primary-light)]
+           border-l-4 border-[var(--color-ls-primary)]
+           rounded-xl
+           p-6
+           shadow-sm;
+    @apply dark:bg-[#162a42];
+  }
 }
