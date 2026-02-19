@@ -102,6 +102,71 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
       </form>
     </div>
 
+    <!-- Stepper Indicator -->
+    <div id="stepperIndicator" class="hidden mt-8">
+      <div class="flex items-center justify-center max-w-md mx-auto">
+        <!-- Step 1 -->
+        <div class="flex flex-col items-center relative z-10 step-item active" id="step1-indicator">
+          <div class="w-10 h-10 rounded-full bg-ls-blue text-white flex items-center justify-center font-bold border-4 border-white dark:border-ls-dark-bg shadow-md transition-all">1</div>
+          <span class="text-xs mt-2 font-bold text-ls-blue">Pitanja</span>
+        </div>
+        <!-- Connector -->
+        <div class="flex-1 h-1 bg-ls-border dark:bg-ls-dark-border -mt-6 mx-[-2px] relative z-0">
+          <div id="step-progress-bar" class="h-full bg-ls-blue w-0 transition-all duration-300"></div>
+        </div>
+        <!-- Step 2 -->
+        <div class="flex flex-col items-center relative z-10 step-item" id="step2-indicator">
+          <div class="w-10 h-10 rounded-full bg-ls-border dark:bg-ls-dark-border text-ls-muted flex items-center justify-center font-bold border-4 border-white dark:border-ls-dark-bg shadow-sm transition-all">2</div>
+          <span class="text-xs mt-2 font-medium text-ls-muted">Grupiranje</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Question Selection Card -->
+    <div
+      id="questionSelectionCard"
+      class="hidden bg-ls-card dark:bg-ls-dark-card rounded-2xl border border-ls-border dark:border-ls-dark-border shadow-lg mt-6 overflow-hidden">
+      <div class="bg-ls-blue card-header-bar text-white">
+        <h5 class="font-heading font-bold">
+          <i class="fas fa-question-circle mr-2"></i>Odaberite pitanja za analizu
+        </h5>
+      </div>
+      <div class="p-6">
+        <p class="text-ls-muted dark:text-ls-dark-muted text-sm mb-4">
+          Odaberite specifična pitanja s Likertovom skalom koja želite uključiti u statističku analizu.
+        </p>
+        <div id="questionCheckboxes" class="flex flex-wrap gap-2"></div>
+        <hr class="border-ls-border dark:border-ls-dark-border my-4" />
+        <div class="flex justify-between items-center mb-6">
+          <span
+            class="text-ls-muted dark:text-ls-dark-muted text-xs"
+            id="questionsSelectedCount"
+            >0 od 0 odabrano</span
+          >
+          <div class="flex gap-2">
+            <button
+              type="button"
+              id="selectAllQuestionsBtn"
+              class="btn btn-secondary btn-sm">
+              <i class="fas fa-check-double"></i>Odaberi sve
+            </button>
+            <button
+              type="button"
+              id="deselectAllQuestionsBtn"
+              class="btn btn-ghost btn-sm">
+              <i class="fas fa-times"></i>Poništi sve
+            </button>
+          </div>
+        </div>
+        <button
+          type="button"
+          id="nextToGroupsBtn"
+          class="btn btn-primary btn-lg w-full">
+          Sljedeći korak (Grupiranje) <i class="fas fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+    </div>
+
     <!-- Column Selection Card -->
     <div
       id="columnSelectionCard"
@@ -112,10 +177,12 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
         </h5>
       </div>
       <div class="p-6">
-        <p class="text-ls-muted dark:text-ls-dark-muted text-sm mb-4"></p>
+        <p class="text-ls-muted dark:text-ls-dark-muted text-sm mb-4">
+          Odaberite stupce po kojima želite grupirati rezultate (npr. spol, dob, grad).
+        </p>
         <div id="columnCheckboxes" class="flex flex-wrap gap-2"></div>
         <hr class="border-ls-border dark:border-ls-dark-border my-4" />
-        <div class="flex justify-between items-center mb-4">
+        <div class="flex justify-between items-center mb-6">
           <span
             class="text-ls-muted dark:text-ls-dark-muted text-xs"
             id="selectedCount"
@@ -136,20 +203,26 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
             </button>
           </div>
         </div>
-        <div class="flex gap-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+          <button
+            type="button"
+            id="backToQuestionsBtn"
+            class="btn btn-secondary btn-lg">
+            <i class="fas fa-arrow-left mr-2"></i>Natrag na pitanja
+          </button>
           <button
             type="button"
             id="calculateBtn"
-            class="btn btn-primary btn-lg flex-1">
-            <i class="fas fa-calculator"></i>Izračunaj statistiku
-          </button>
-          <button
-            type="button"
-            id="skipGroupingBtn"
-            class="btn btn-ghost btn-lg">
-            <i class="fas fa-forward"></i>Bez grupiranja
+            class="btn btn-primary btn-lg">
+            <i class="fas fa-calculator mr-2"></i>Izračunaj statistiku
           </button>
         </div>
+        <button
+          type="button"
+          id="skipGroupingBtn"
+          class="btn btn-ghost btn-lg w-full">
+          <i class="fas fa-forward mr-2"></i>Preskoči grupiranje i izračunaj
+        </button>
       </div>
     </div>
   </div>
@@ -595,7 +668,7 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
           }
           if (detectionDone) {
               detectionDone = false;
-              $('#columnSelectionCard').slideUp(300, 'linear');
+              $('#columnSelectionCard, #questionSelectionCard, #stepperIndicator').slideUp(300, 'linear');
               $('input.hidden-group').remove();
               $('#submitBtn').show().prop('disabled', false)
                   .html('<i class="fas fa-upload"></i> Učitaj i izračunaj');
@@ -624,12 +697,12 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
               contentType: false,
               success: function(data) {
                   detectionDone = true;
-                  if (data.columns && data.columns.length > 0) {
-                      showColumnSelection(data.columns);
+                  if ((data.groupable && data.groupable.length > 0) || (data.questions && data.questions.length > 0)) {
+                      showColumnSelection(data.groupable, data.questions);
                       $btn.hide();
                   } else {
                       $btn.html('<i class="fas fa-spinner fa-spin"></i> Obrađujem...');
-                      submitCalculation([]);
+                      submitCalculation([], []);
                   }
               },
               error: function(xhr) {
@@ -653,23 +726,76 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
       });
 
       // ===== Column selection helpers =====
-      function showColumnSelection(columns) {
-          var $container = $('#columnCheckboxes');
-          $container.empty();
+      function showColumnSelection(groupable, questions) {
+          // Grouping columns
+          var $groupContainer = $('#columnCheckboxes');
+          $groupContainer.empty();
 
-          columns.forEach(function(col, index) {
+          groupable.forEach(function(col) {
               var $pill = $('<button type="button" class="toggle-pill grouping-pill">')
                   .attr('data-value', col);
               var $check = $('<span class="pill-check"><i class="fas fa-check"></i></span>');
               var $text = $('<span>').text(col);
               $pill.append($check).append($text);
-              $container.append($pill);
+              $groupContainer.append($pill);
+          });
+
+          // Questions
+          var $questionContainer = $('#questionCheckboxes');
+          $questionContainer.empty();
+
+          questions.forEach(function(q) {
+              var $pill = $('<button type="button" class="toggle-pill question-pill active">')
+                  .attr('data-value', q);
+              var $check = $('<span class="pill-check"><i class="fas fa-check"></i></span>');
+              var $text = $('<span>').text(q);
+              $pill.append($check).append($text);
+              $questionContainer.append($pill);
           });
 
           updateSelectedCount();
-          $('#columnSelectionCard').hide().removeClass('hidden').slideDown(400, 'linear');
-          $('html, body').animate({ scrollTop: $('#columnSelectionCard').offset().top - 100 }, 400, 'linear');
+          updateQuestionSelectedCount();
+
+          $('#stepperIndicator').hide().removeClass('hidden').slideDown(400, 'linear');
+          goToStep(1);
+
+          $('html, body').animate({ scrollTop: $('#stepperIndicator').offset().top - 100 }, 400, 'linear');
       }
+
+      function goToStep(step) {
+          if (step === 1) {
+              $('#columnSelectionCard').hide();
+              $('#questionSelectionCard').hide().removeClass('hidden').fadeIn(300);
+
+              // Update indicator
+              $('#step1-indicator').addClass('active').find('> div').addClass('bg-ls-blue text-white').removeClass('bg-ls-border dark:bg-ls-dark-border text-ls-muted');
+              $('#step1-indicator span').addClass('text-ls-blue font-bold').removeClass('text-ls-muted font-medium');
+
+              $('#step2-indicator').removeClass('active').find('> div').addClass('bg-ls-border dark:bg-ls-dark-border text-ls-muted').removeClass('bg-ls-blue text-white');
+              $('#step2-indicator span').addClass('text-ls-muted font-medium').removeClass('text-ls-blue font-bold');
+
+              $('#step-progress-bar').css('width', '0%');
+          } else if (step === 2) {
+              $('#questionSelectionCard').hide();
+              $('#columnSelectionCard').hide().removeClass('hidden').fadeIn(300);
+
+              // Update indicator
+              $('#step2-indicator').addClass('active').find('> div').addClass('bg-ls-blue text-white').removeClass('bg-ls-border dark:bg-ls-dark-border text-ls-muted');
+              $('#step2-indicator span').addClass('text-ls-blue font-bold').removeClass('text-ls-muted font-medium');
+
+              $('#step-progress-bar').css('width', '100%');
+          }
+      }
+
+      $('#nextToGroupsBtn').on('click', function() {
+          goToStep(2);
+          $('html, body').animate({ scrollTop: $('#stepperIndicator').offset().top - 100 }, 300, 'linear');
+      });
+
+      $('#backToQuestionsBtn').on('click', function() {
+          goToStep(1);
+          $('html, body').animate({ scrollTop: $('#stepperIndicator').offset().top - 100 }, 300, 'linear');
+      });
 
       function updateSelectedCount() {
           var count = $('.grouping-pill.active').length;
@@ -677,9 +803,21 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
           $('#selectedCount').text(count + ' od ' + total + ' odabrano');
       }
 
+      function updateQuestionSelectedCount() {
+          var count = $('.question-pill.active').length;
+          var total = $('.question-pill').length;
+          $('#questionsSelectedCount').text(count + ' od ' + total + ' odabrano');
+          $('#calculateBtn').prop('disabled', count === 0);
+      }
+
       $(document).on('click', '.grouping-pill', function() {
           $(this).toggleClass('active');
           updateSelectedCount();
+      });
+
+      $(document).on('click', '.question-pill', function() {
+          $(this).toggleClass('active');
+          updateQuestionSelectedCount();
       });
 
       $('#selectAllBtn').on('click', function() {
@@ -692,11 +830,24 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
           updateSelectedCount();
       });
 
-      function submitCalculation(selectedColumns) {
+      $('#selectAllQuestionsBtn').on('click', function() {
+          $('.question-pill').addClass('active');
+          updateQuestionSelectedCount();
+      });
+
+      $('#deselectAllQuestionsBtn').on('click', function() {
+          $('.question-pill').removeClass('active');
+          updateQuestionSelectedCount();
+      });
+
+      function submitCalculation(selectedGroups, selectedQuestions) {
           var $form = $('#uploadForm');
-          $form.find('input.hidden-group').remove();
-          selectedColumns.forEach(function(col) {
+          $form.find('input.hidden-group, input.hidden-question').remove();
+          selectedGroups.forEach(function(col) {
               $form.append($('<input type="hidden" name="selected_groups" class="hidden-group">').val(col));
+          });
+          selectedQuestions.forEach(function(q) {
+              $form.append($('<input type="hidden" name="selected_questions" class="hidden-question">').val(q));
           });
           $('#calculateBtn').prop('disabled', true)
               .html('<i class="fas fa-spinner fa-spin"></i> Obrađujem...');
@@ -705,15 +856,23 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
       }
 
       $('#calculateBtn').on('click', function() {
-          var selected = [];
+          var groups = [];
           $('.grouping-pill.active').each(function() {
-              selected.push($(this).data('value'));
+              groups.push($(this).data('value'));
           });
-          submitCalculation(selected);
+          var questions = [];
+          $('.question-pill.active').each(function() {
+              questions.push($(this).data('value'));
+          });
+          submitCalculation(groups, questions);
       });
 
       $('#skipGroupingBtn').on('click', function() {
-          submitCalculation([]);
+          var questions = [];
+          $('.question-pill.active').each(function() {
+              questions.push($(this).data('value'));
+          });
+          submitCalculation([], questions);
       });
 
       // ===== Grouping selector with slide animation =====
@@ -748,8 +907,8 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
       // ===== Animate result rows on load =====
       {% if results %}
       $('.instruction-card, .upload-card').hide();
-      $('#columnSelectionCard').hide();
-      $('#upload-section').removeClass('py-16 lg:py-20 py-0');
+      $('#columnSelectionCard, #questionSelectionCard, #stepperIndicator').hide();
+      $('#upload-section').removeClass('py-16 lg:py-20').addClass('py-0');
 
       $('.results-group.active .result-row').each(function(index) {
           $(this).css({ opacity: 0, transform: 'translateY(15px)' });
@@ -779,8 +938,8 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
       $('#resetBtn').on('click', function() {
           detectionDone = false;
           $('#results-section').slideUp(400, 'linear');
-          $('#columnSelectionCard').slideUp(300, 'linear');
-          $('input.hidden-group').remove();
+          $('#columnSelectionCard, #questionSelectionCard, #stepperIndicator').slideUp(300, 'linear');
+          $('input.hidden-group, input.hidden-question').remove();
           $('.instruction-card, .upload-card').slideDown(400, 'linear');
           $('#upload-section').addClass('py-16 lg:py-20');
           $('#uploadForm')[0].reset();

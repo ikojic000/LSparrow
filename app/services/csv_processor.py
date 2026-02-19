@@ -21,36 +21,24 @@ class CSVProcessor:
         """Initialize the CSV processor."""
         self.stats_calculator = StatisticsCalculator()
 
-    def detect_groupable_columns(self, file_content: BinaryIO) -> List[str]:
+    def detect_columns(self, file_content: BinaryIO) -> Dict[str, List[str]]:
         """
-        Detect non-Likert columns that can be used for grouping.
-
-        A column is groupable if:
-        - It is NOT a Likert scale column (1-5 values)
-        - It is non-numeric or categorical
-        - The dataset has more than one row
-        - It is NOT a multi-select column (values containing ";")
-        - It does NOT have approximately one unique value per row
-          (e.g. IDs, timestamps, emails)
-
-        A column is NOT excluded solely because it has only one unique value.
-
-        Args:
-            file_content: File-like object containing CSV data.
+        Detect columns that can be used for grouping and Likert columns for analysis.
 
         Returns:
-            List of column names suitable for grouping.
+            Dictionary with 'groupable' and 'questions' lists.
         """
         df = self._read_csv(file_content)
 
         if len(df) <= 1:
-            return []
+            return {"groupable": [], "questions": []}
 
-        likert_columns = set(self._find_likert_columns(df))
+        likert_columns = self._find_likert_columns(df)
+        likert_set = set(likert_columns)
 
         groupable = []
         for col in df.columns:
-            if col in likert_columns:
+            if col in likert_set:
                 continue
 
             if not self._is_categorical_column(df[col]):
@@ -64,7 +52,7 @@ class CSVProcessor:
 
             groupable.append(col)
 
-        return groupable
+        return {"groupable": groupable, "questions": likert_columns}
 
     def _is_categorical_column(self, series: pd.Series) -> bool:
         """
@@ -105,6 +93,7 @@ class CSVProcessor:
         self,
         file_content: BinaryIO,
         selected_grouping_columns: Optional[List[str]] = None,
+        selected_questions: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
         """
         Process uploaded CSV file and return statistics for Likert scale questions.
@@ -113,12 +102,19 @@ class CSVProcessor:
             file_content: File-like object containing CSV data.
             selected_grouping_columns: List of column names to group by.
                 If None or empty, only overall statistics are calculated.
+            selected_questions: List of Likert question columns to include.
+                If None, all detected Likert columns are included.
 
         Returns:
             Dictionary containing overall statistics, grouped statistics, and grouping info.
         """
         df = self._read_csv(file_content)
         likert_columns = self._find_likert_columns(df)
+
+        if selected_questions:
+            # Only keep questions that are both selected and actually Likert
+            likert_set = set(likert_columns)
+            likert_columns = [q for q in selected_questions if q in likert_set]
 
         overall_results = self._calculate_overall_statistics(df, likert_columns)
         grouped_results, available_groupings = self._calculate_grouped_statistics(

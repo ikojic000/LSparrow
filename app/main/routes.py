@@ -93,8 +93,9 @@ def analysis():
             else:
                 try:
                     selected_groups = request.form.getlist("selected_groups")
+                    selected_questions = request.form.getlist("selected_questions")
                     processor = CSVProcessor()
-                    results = processor.process(file, selected_groups)
+                    results = processor.process(file, selected_groups, selected_questions)
 
                     if not results["overall"]:
                         error = "Nisu pronađena pitanja s Likertovom skalom (1-5) u CSV datoteci"
@@ -133,8 +134,8 @@ def detect_columns():
 
     try:
         processor = CSVProcessor()
-        columns = processor.detect_groupable_columns(file)
-        return jsonify({"columns": columns})
+        result = processor.detect_columns(file)
+        return jsonify(result)
     except UnsupportedEncodingError as e:
         return jsonify({"error": str(e.message)}), 400
     except AppException as e:
