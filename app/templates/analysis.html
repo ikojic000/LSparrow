@@ -667,6 +667,80 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
           </div>
         </div>
       </div>
+
+      {# Distribution Table #}
+      {% if results.distributions and results.distributions[group_key] and results.distributions[group_key][group_value] %}
+      <div
+        class="bg-white dark:bg-ls-dark-card rounded-xl border border-ls-border dark:border-ls-dark-border shadow-sm overflow-hidden mb-6 capture-container">
+        <div
+          class="bg-ls-brown card-header-bar flex justify-between items-center">
+          <h5 class="font-heading font-bold">
+            <i class="fas fa-chart-pie mr-2"></i>
+            Distribucija odgovora: {{ group_value }}
+          </h5>
+          <div class="flex items-center gap-2">
+            <button
+              class="capture-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
+              title="Preuzmi kao sliku">
+              <i class="fas fa-camera"></i>
+            </button>
+            <button
+              class="toggle-table-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
+              data-target="dist-{{ group_key }}-{{ loop.index }}">
+              <i class="fas fa-chevron-up"></i>
+            </button>
+          </div>
+        </div>
+        <div id="dist-{{ group_key }}-{{ loop.index }}">
+          <div class="overflow-x-auto table-scroll">
+            <table class="w-full text-sm">
+              <thead
+                class="bg-slate-700 dark:bg-slate-800 text-white text-xs uppercase tracking-wider">
+                <tr>
+                  <th class="px-3 py-2.5 font-semibold text-left">#</th>
+                  <th class="px-3 py-2.5 font-semibold text-left question-col">
+                    Pitanje
+                  </th>
+                  <th class="px-3 py-2.5 font-semibold text-center">N</th>
+                  <th class="px-3 py-2.5 font-semibold text-center">1–2 (n, %)</th>
+                  <th class="px-3 py-2.5 font-semibold text-center">3 (n, %)</th>
+                  <th class="px-3 py-2.5 font-semibold text-center">4–5 (n, %)</th>
+                  <th class="px-3 py-2.5 font-semibold text-center">AS</th>
+                </tr>
+              </thead>
+              <tbody
+                class="divide-y divide-ls-border dark:divide-ls-dark-border">
+                {% for row in results.distributions[group_key][group_value] %}
+                <tr
+                  class="hover:bg-ls-blue-light/50 dark:hover:bg-ls-blue/10 transition-colors even:bg-ls-bg/50 dark:even:bg-ls-dark-section/50 result-row">
+                  <td class="px-3 py-2.5 text-ls-muted dark:text-ls-dark-muted">
+                    {{ loop.index }}
+                  </td>
+                  <td
+                    class="px-3 py-2.5 question-col font-medium dark:text-ls-dark-text">
+                    {{ row.question }}
+                  </td>
+                  <td class="px-3 py-2.5 text-center">{{ row.N }}</td>
+                  <td class="px-3 py-2.5 text-center dark:text-ls-dark-text">
+                    {{ row.dis_count }} ({{ row.dis_percent }}%)
+                  </td>
+                  <td class="px-3 py-2.5 text-center dark:text-ls-dark-text">
+                    {{ row.neu_count }} ({{ row.neu_percent }}%)
+                  </td>
+                  <td class="px-3 py-2.5 text-center dark:text-ls-dark-text">
+                    {{ row.agr_count }} ({{ row.agr_percent }}%)
+                  </td>
+                  <td class="px-3 py-2.5 text-center font-semibold dark:text-ls-dark-text">
+                    {{ row.AS }}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      {% endif %}
       {% endfor %}
     </div>
     {% endfor %}

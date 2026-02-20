@@ -117,7 +117,11 @@ class CSVProcessor:
             likert_columns = [q for q in selected_questions if q in likert_set]
 
         overall_results = self._calculate_overall_statistics(df, likert_columns)
-        grouped_results, available_groupings = self._calculate_grouped_statistics(
+        (
+            grouped_results,
+            available_groupings,
+            distribution_results,
+        ) = self._calculate_grouped_statistics(
             df, likert_columns, selected_grouping_columns or []
         )
 
@@ -125,6 +129,7 @@ class CSVProcessor:
             "overall": overall_results,
             "grouped": grouped_results,
             "groupings": available_groupings,
+            "distributions": distribution_results,
         }
 
     def _read_csv(self, file_content: BinaryIO) -> pd.DataFrame:
@@ -194,7 +199,7 @@ class CSVProcessor:
         df: pd.DataFrame,
         likert_columns: List[str],
         selected_columns: List[str],
-    ) -> Tuple[Dict, Dict]:
+    ) -> Tuple[Dict, Dict, Dict]:
         """
         Calculate statistics grouped by selected columns.
 
@@ -204,10 +209,11 @@ class CSVProcessor:
             selected_columns: List of column names to group by.
 
         Returns:
-            Tuple of (grouped_results, available_groupings) dictionaries.
+            Tuple of (grouped_results, available_groupings, distribution_results) dictionaries.
         """
         grouped_results = {}
         available_groupings = {}
+        distribution_results = {}
 
         for idx, col_name in enumerate(selected_columns):
             if col_name not in df.columns:
@@ -230,7 +236,74 @@ class CSVProcessor:
                 df, col_name, unique_values, likert_columns
             )
 
-        return grouped_results, available_groupings
+            distribution_results[group_key] = self._calculate_distribution_statistics(
+                df, col_name, unique_values, likert_columns
+            )
+
+        return grouped_results, available_groupings, distribution_results
+
+    def _calculate_distribution_statistics(
+        self,
+        df: pd.DataFrame,
+        group_col: str,
+        unique_values: list,
+        likert_columns: List[str],
+    ) -> Dict:
+        """
+        Calculate Likert distribution statistics (Agreement/Neutral/Disagreement).
+
+        Args:
+            df: DataFrame with survey data.
+            group_col: Column name to group by.
+            unique_values: List of unique values in the group column.
+            likert_columns: List of columns to analyze.
+
+        Returns:
+            Dictionary mapping group values to their distribution statistics.
+        """
+        distribution_results = {}
+
+        for value in unique_values:
+            group_df = df[df[group_col] == value]
+            group_dist = []
+
+            for column in likert_columns:
+                # Get valid responses 1-5
+                numeric_col = pd.to_numeric(group_df[column], errors="coerce")
+                valid_data = numeric_col[
+                    (numeric_col >= 1) & (numeric_col <= 5)
+                ].dropna()
+
+                n = len(valid_data)
+                if n == 0:
+                    continue
+
+                dis = len(valid_data[(valid_data >= 1) & (valid_data <= 2)])
+                neu = len(valid_data[valid_data == 3])
+                agr = len(valid_data[(valid_data >= 4) & (valid_data <= 5)])
+
+                # Get mean from calculator
+                stats_data = self.stats_calculator.calculate(numeric_col)
+                mean = stats_data["AS"] if stats_data else "-"
+
+                group_dist.append(
+                    {
+                        "question": column,
+                        "N": n,
+                        "AS": mean,
+                        "dis_count": dis,
+                        "dis_percent": round((dis / n) * 100, 1),
+                        "neu_count": neu,
+                        "neu_percent": round((neu / n) * 100, 1),
+                        "agr_count": agr,
+                        "agr_percent": round((agr / n) * 100, 1),
+                    }
+                )
+
+            if group_dist:
+                distribution_results[value] = group_dist
+
+        return distribution_results
 
     def _calculate_group_statistics(
         self,
