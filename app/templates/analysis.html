@@ -485,9 +485,9 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
           </h5>
           <div class="flex items-center gap-2">
             <button
-              class="capture-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
-              title="Preuzmi kao sliku">
-              <i class="fas fa-camera"></i>
+              class="copy-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
+              title="Kopiraj tablicu">
+              <i class="fas fa-copy"></i>
             </button>
             <button
               class="toggle-table-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
@@ -594,9 +594,9 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
           </h5>
           <div class="flex items-center gap-2">
             <button
-              class="capture-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
-              title="Preuzmi kao sliku">
-              <i class="fas fa-camera"></i>
+              class="copy-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
+              title="Kopiraj tablicu">
+              <i class="fas fa-copy"></i>
             </button>
             <button
               class="toggle-table-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
@@ -668,8 +668,9 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
         </div>
       </div>
 
-      {# Distribution Table #}
-      {% if results.distributions and results.distributions[group_key] and results.distributions[group_key][group_value] %}
+      {# Distribution Table #} {% if results.distributions and
+      results.distributions[group_key] and
+      results.distributions[group_key][group_value] %}
       <div
         class="bg-white dark:bg-ls-dark-card rounded-xl border border-ls-border dark:border-ls-dark-border shadow-sm overflow-hidden mb-6 capture-container">
         <div
@@ -680,9 +681,9 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
           </h5>
           <div class="flex items-center gap-2">
             <button
-              class="capture-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
-              title="Preuzmi kao sliku">
-              <i class="fas fa-camera"></i>
+              class="copy-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
+              title="Kopiraj tablicu">
+              <i class="fas fa-copy"></i>
             </button>
             <button
               class="toggle-table-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
@@ -702,9 +703,15 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
                     Pitanje
                   </th>
                   <th class="px-3 py-2.5 font-semibold text-center">N</th>
-                  <th class="px-3 py-2.5 font-semibold text-center">1–2 (n, %)</th>
-                  <th class="px-3 py-2.5 font-semibold text-center">3 (n, %)</th>
-                  <th class="px-3 py-2.5 font-semibold text-center">4–5 (n, %)</th>
+                  <th class="px-3 py-2.5 font-semibold text-center">
+                    1–2 (n, %)
+                  </th>
+                  <th class="px-3 py-2.5 font-semibold text-center">
+                    3 (n, %)
+                  </th>
+                  <th class="px-3 py-2.5 font-semibold text-center">
+                    4–5 (n, %)
+                  </th>
                   <th class="px-3 py-2.5 font-semibold text-center">AS</th>
                 </tr>
               </thead>
@@ -730,7 +737,8 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
                   <td class="px-3 py-2.5 text-center dark:text-ls-dark-text">
                     {{ row.agr_count }} ({{ row.agr_percent }}%)
                   </td>
-                  <td class="px-3 py-2.5 text-center font-semibold dark:text-ls-dark-text">
+                  <td
+                    class="px-3 py-2.5 text-center font-semibold dark:text-ls-dark-text">
                     {{ row.AS }}
                   </td>
                 </tr>
@@ -740,8 +748,7 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
           </div>
         </div>
       </div>
-      {% endif %}
-      {% endfor %}
+      {% endif %} {% endfor %}
     </div>
     {% endfor %}
 
@@ -754,485 +761,502 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
   </div>
 </section>
 {% endif %} {% endblock %} {% block extra_js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!-- Tailwind Safelist (Ensures dynamic classes are included in the build) -->
+<div
+  class="hidden fixed top-20 right-10 flex items-center bg-ls-success bg-ls-danger text-white px-6 py-3 rounded-xl shadow-2xl z-[9999] transform translate-y-0 opacity-0 opacity-100 transition-all duration-300"></div>
+
 <script>
-  $(document).on('click', '.capture-btn', function() {
-    const card = $(this).closest('.capture-container')[0];
-    const fileName = "analiza_" + new Date().getTime() + ".png";
+  // ===== Copy to Clipboard logic =====
+  $(document).on('click', '.copy-btn', async function () {
+  	const $btn = $(this);
+  	const $container = $btn.closest('.capture-container');
+  	const $table = $container.find('table');
+  	const tableHtml = $table[0].outerHTML;
+  	const tableText = $table.text();
+  	const originalIcon = $btn.find('i').attr('class');
 
-    // Create a temporary style for the cloned document to ensure correct rendering without oklch
-    const styleOverride = document.createElement('style');
-    styleOverride.innerHTML = `
-        .capture-container { background: white !important; color: black !important; padding: 20px !important; border-radius: 12px !important; }
-        table { border-collapse: collapse !important; width: 100% !important; margin-bottom: 1rem !important; }
-        th, td { border: 1px solid #cbd5e1 !important; padding: 10px 12px !important; text-align: left !important; color: #1e293b !important; }
-        th { background-color: #334155 !important; color: white !important; font-weight: bold !important; text-transform: uppercase !important; font-size: 0.75rem !important; }
-        .card-header-bar { background-color: #2563eb !important; color: white !important; padding: 12px 16px !important; border-radius: 8px 8px 0 0 !important; display: flex !important; justify-content: space-between !important; align-items: center !important; }
-        .card-header-bar h5 { margin: 0 !important; font-weight: bold !important; }
-        .text-center { text-align: center !important; }
-        .font-bold { font-weight: bold !important; }
-        .question-col { min-width: 250px !important; }
-        .capture-btn, .toggle-table-btn { display: none !important; } /* Hide buttons in capture */
-    `;
+  	try {
+  		// Ensure document is focused
+  		if (document.hasFocus && !document.hasFocus()) {
+  			window.focus();
+  		}
 
-    html2canvas(card, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        onclone: function(clonedDoc) {
-            // 1. Remove all external stylesheets to prevent oklch parsing errors
-            const links = clonedDoc.getElementsByTagName("link");
-            for (let i = links.length - 1; i >= 0; i--) {
-                if (links[i].rel === "stylesheet") {
-                    links[i].parentNode.removeChild(links[i]);
-                }
-            }
+  		if (navigator.clipboard && window.ClipboardItem) {
 
-            // 2. Sanitize all internal style tags
-            const styleTags = clonedDoc.getElementsByTagName("style");
-            for (let i = 0; i < styleTags.length; i++) {
-                if (/oklch|oklab/i.test(styleTags[i].innerHTML)) {
-                    styleTags[i].innerHTML = styleTags[i].innerHTML.replace(/(oklch|oklab)\([^)]+\)/gi, "#00000000");
-                }
-            }
+  			const item = new ClipboardItem({
+  				"text/html": new Blob([tableHtml], {type: "text/html"}),
+  				"text/plain": new Blob([tableText], {type: "text/plain"})
+  			});
 
-            // 3. Inject our safe styles
-            clonedDoc.head.appendChild(styleOverride);
+  			navigator.clipboard.write([item])
+  					.then(() => {
+  						showToast("Tablica kopirana u međuspremnik!", "success");
+  					})
+  					.catch(err => {
+  						console.error("Copy failed:", err);
+  						showToast("Kopiranje nije uspjelo.", "error");
+  					});
 
-            // 4. Deep sanitize all elements and their inline/computed styles
-            const allElements = clonedDoc.getElementsByTagName('*');
-            for (let i = 0; i < allElements.length; i++) {
-                const el = allElements[i];
-                const s = window.getComputedStyle(el);
+  		} else {
+  			const textArea = document.createElement("textarea");
+  			textArea.value = tableText;
+  			document.body.appendChild(textArea);
+  			textArea.select();
+  			document.execCommand("copy");
+  			document.body.removeChild(textArea);
 
-                const props = ['color', 'backgroundColor', 'borderColor', 'outlineColor', 'fill', 'stroke'];
-                props.forEach(p => {
-                    const val = s[p];
-                    if (val && /oklch|oklab/i.test(val)) {
-                        if (p === 'backgroundColor') el.style.setProperty(p, '#ffffff', 'important');
-                        else if (p === 'color') el.style.setProperty(p, '#000000', 'important');
-                        else if (p.includes('Color')) el.style.setProperty(p, '#cbd5e1', 'important');
-                    }
-                });
+  			showToast("Tablica kopirana!", "success");
+  		}
 
-                // Remove any inline oklch
-                if (el.getAttribute('style') && /oklch|oklab/i.test(el.getAttribute('style'))) {
-                    const newStyle = el.getAttribute('style').replace(/(oklch|oklab)\([^)]+\)/gi, "inherit");
-                    el.setAttribute('style', newStyle);
-                }
-            }
-        }
-    }).then(canvas => {
-        const link = document.createElement("a");
-        link.download = fileName;
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-    }).catch(err => {
-        console.error("html2canvas error:", err);
-        alert("Greška pri izradi slike. Preglednik ne podržava capture ove stranice zbog modernih CSS boja (oklch). Pokušajte u drugom pregledniku ili koristite screenshot.");
-    });
+  		$btn.find('i').attr('class', 'fas fa-check');
+  		setTimeout(() => {
+  			$btn.find('i').attr('class', originalIcon);
+  		}, 2000);
+
+  	} catch (err) {
+  		console.error("Copy failed:", err);
+  		showToast("Kopiranje nije uspjelo.", "error");
+  	}
   });
 
-  $(document).ready(function() {
+  // ===== Toast Notification logic =====
+  function showToast(message, type = "success") {
+  	const bgColor = type === "success" ? "bg-ls-success" : "bg-ls-danger";
+  	const icon = type === "success" ? "fa-check-circle" : "fa-exclamation-circle";
 
-      // ===== File input preview =====
-      var detectionDone = false;
+  	// Create toast with explicit styles to ensure visibility even if Tailwind classes fail
+  	const $toast = $(`
+       <div class="fixed top-20 right-10 flex items-center ${bgColor} text-white px-6 py-3 rounded-xl shadow-2xl z-[9999] transform translate-y-0 opacity-0 transition-all duration-300"
+            style="min-width: 250px;">
+         <i class="fas ${icon} mr-3 text-lg"></i>
+         <span class="font-bold">${message}</span>
+       </div>
+     `);
 
-      $('#csv_file').on('change', function() {
-          var file = this.files[0];
-          if (file) {
-              var sizeMB = (file.size / (1024 * 1024)).toFixed(2);
-              $('#fileName').text(file.name);
-              $('#fileSize').text(sizeMB + ' MB');
-              $('#fileInfo').hide().removeClass('hidden').slideDown(300, 'linear');
-          } else {
-              $('#fileInfo').slideUp(300, 'linear', function() { $(this).addClass('hidden'); });
-          }
-          if (detectionDone) {
-              detectionDone = false;
-              $('#columnSelectionCard, #questionSelectionCard, #stepperIndicator').slideUp(300, 'linear');
-              $('input.hidden-group').remove();
-              $('#submitBtn').show().prop('disabled', false)
-                  .html('<i class="fas fa-upload"></i> Učitaj i izračunaj');
-          }
-      });
+  	$('body').append($toast);
 
-      // ===== Form submit — detect groupable columns via AJAX =====
-      $('#uploadForm').on('submit', function(e) {
-          e.preventDefault();
+  	// Trigger animation
+  	setTimeout(() => {
+  		$toast.removeClass('opacity-0').addClass('opacity-100');
+  	}, 10);
 
-          var fileInput = $('#csv_file')[0];
-          if (!fileInput.files.length) return;
+  	// Auto-remove
+  	setTimeout(() => {
+  		$toast.addClass('opacity-0').removeClass('opacity-100');
+  		setTimeout(() => {
+  			$toast.remove();
+  		}, 300);
+  	}, 3500);
+  }
 
-          var $btn = $('#submitBtn');
-          $btn.prop('disabled', true);
-          $btn.html('<i class="fas fa-spinner fa-spin"></i> Analiziram stupce...');
+  $(document).ready(function () {
 
-          var formData = new FormData();
-          formData.append('csv_file', fileInput.files[0]);
+  	// ===== File input preview =====
+  	var detectionDone = false;
 
-          $.ajax({
-              url: '{{ url_for("main.detect_columns") }}',
-              method: 'POST',
-              data: formData,
-              processData: false,
-              contentType: false,
-              success: function(data) {
-                  detectionDone = true;
-                  if ((data.groupable && data.groupable.length > 0) || (data.questions && data.questions.length > 0)) {
-                      showColumnSelection(data.groupable, data.questions);
-                      $btn.hide();
-                  } else {
-                      $btn.html('<i class="fas fa-spinner fa-spin"></i> Obrađujem...');
-                      submitCalculation([], []);
-                  }
-              },
-              error: function(xhr) {
-                  var msg = 'Greška pri analizi stupaca.';
-                  try { msg = JSON.parse(xhr.responseText).error; } catch(ex) {}
-                  var $alert = $('<div class="bg-ls-danger-light border border-ls-danger/30 rounded-xl p-4 flex items-start gap-3 mt-4">'
-                      + '<i class="fas fa-exclamation-triangle text-ls-danger mt-0.5"></i>'
-                      + '<span class="text-red-800">' + $('<span>').text(msg).html() + '</span>'
-                      + '<button type="button" class="alert-dismiss ml-auto text-red-400 hover:text-red-700 transition"><i class="fas fa-times"></i></button>'
-                      + '</div>');
-                  $('.upload-card').after($alert);
-                  $btn.prop('disabled', false);
-                  $btn.html('<i class="fas fa-upload"></i> Učitaj i izračunaj');
-              }
-          });
-      });
+  	$('#csv_file').on('change', function () {
+  		var file = this.files[0];
+  		if (file) {
+  			var sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+  			$('#fileName').text(file.name);
+  			$('#fileSize').text(sizeMB + ' MB');
+  			$('#fileInfo').hide().removeClass('hidden').slideDown(300, 'linear');
+  		} else {
+  			$('#fileInfo').slideUp(300, 'linear', function () {
+  				$(this).addClass('hidden');
+  			});
+  		}
+  		if (detectionDone) {
+  			detectionDone = false;
+  			$('#columnSelectionCard, #questionSelectionCard, #stepperIndicator').slideUp(300, 'linear');
+  			$('input.hidden-group').remove();
+  			$('#submitBtn').show().prop('disabled', false)
+  					.html('<i class="fas fa-upload"></i> Učitaj i izračunaj');
+  		}
+  	});
 
-      // ===== Alert dismiss =====
-      $(document).on('click', '.alert-dismiss', function() {
-          $(this).closest('[role=alert], .bg-ls-danger-light').fadeOut(300, function() { $(this).remove(); });
-      });
+  	// ===== Form submit — detect groupable columns via AJAX =====
+  	$('#uploadForm').on('submit', function (e) {
+  		e.preventDefault();
 
-      // ===== Column selection helpers =====
-      function showColumnSelection(groupable, questions) {
-          // Grouping columns
-          var $groupContainer = $('#columnCheckboxes');
-          $groupContainer.empty();
+  		var fileInput = $('#csv_file')[0];
+  		if (!fileInput.files.length) return;
 
-          groupable.forEach(function(col) {
-              var $pill = $('<button type="button" class="toggle-pill grouping-pill">')
-                  .attr('data-value', col);
-              var $check = $('<span class="pill-check"><i class="fas fa-check"></i></span>');
-              var $text = $('<span>').text(col);
-              $pill.append($check).append($text);
-              $groupContainer.append($pill);
-          });
+  		var $btn = $('#submitBtn');
+  		$btn.prop('disabled', true);
+  		$btn.html('<i class="fas fa-spinner fa-spin"></i> Analiziram stupce...');
 
-          // Questions
-          var $questionContainer = $('#questionCheckboxes');
-          $questionContainer.empty();
+  		var formData = new FormData();
+  		formData.append('csv_file', fileInput.files[0]);
 
-          questions.forEach(function(q) {
-              var $pill = $('<button type="button" class="toggle-pill question-pill active">')
-                  .attr('data-value', q);
-              var $check = $('<span class="pill-check"><i class="fas fa-check"></i></span>');
-              var $text = $('<span>').text(q);
-              $pill.append($check).append($text);
-              $questionContainer.append($pill);
-          });
+  		$.ajax({
+  			url: '{{ url_for("main.detect_columns") }}',
+  			method: 'POST',
+  			data: formData,
+  			processData: false,
+  			contentType: false,
+  			success: function (data) {
+  				detectionDone = true;
+  				if ((data.groupable && data.groupable.length > 0) || (data.questions && data.questions.length > 0)) {
+  					showColumnSelection(data.groupable, data.questions);
+  					$btn.hide();
+  				} else {
+  					$btn.html('<i class="fas fa-spinner fa-spin"></i> Obrađujem...');
+  					submitCalculation([], []);
+  				}
+  			},
+  			error: function (xhr) {
+  				var msg = 'Greška pri analizi stupaca.';
+  				try {
+  					msg = JSON.parse(xhr.responseText).error;
+  				} catch (ex) {
+  				}
+  				var $alert = $('<div class="bg-ls-danger-light border border-ls-danger/30 rounded-xl p-4 flex items-start gap-3 mt-4">'
+  						+ '<i class="fas fa-exclamation-triangle text-ls-danger mt-0.5"></i>'
+  						+ '<span class="text-red-800">' + $('<span>').text(msg).html() + '</span>'
+  						+ '<button type="button" class="alert-dismiss ml-auto text-red-400 hover:text-red-700 transition"><i class="fas fa-times"></i></button>'
+  						+ '</div>');
+  				$('.upload-card').after($alert);
+  				$btn.prop('disabled', false);
+  				$btn.html('<i class="fas fa-upload"></i> Učitaj i izračunaj');
+  			}
+  		});
+  	});
 
-          updateSelectedCount();
-          updateQuestionSelectedCount();
+  	// ===== Alert dismiss =====
+  	$(document).on('click', '.alert-dismiss', function () {
+  		$(this).closest('[role=alert], .bg-ls-danger-light').fadeOut(300, function () {
+  			$(this).remove();
+  		});
+  	});
 
-          $('#stepperIndicator').hide().removeClass('hidden').slideDown(400, 'linear');
-          goToStep(1);
+  	// ===== Column selection helpers =====
+  	function showColumnSelection(groupable, questions) {
+  		// Grouping columns
+  		var $groupContainer = $('#columnCheckboxes');
+  		$groupContainer.empty();
 
-          $('html, body').animate({ scrollTop: $('#stepperIndicator').offset().top - 100 }, 400, 'linear');
-      }
+  		groupable.forEach(function (col) {
+  			var $pill = $('<button type="button" class="toggle-pill grouping-pill">')
+  					.attr('data-value', col);
+  			var $check = $('<span class="pill-check"><i class="fas fa-check"></i></span>');
+  			var $text = $('<span>').text(col);
+  			$pill.append($check).append($text);
+  			$groupContainer.append($pill);
+  		});
 
-      function goToStep(step) {
-          if (step === 1) {
-              $('#columnSelectionCard').hide();
-              $('#questionSelectionCard').hide().removeClass('hidden').fadeIn(300);
+  		// Questions
+  		var $questionContainer = $('#questionCheckboxes');
+  		$questionContainer.empty();
 
-              // Update indicator
-              $('#step1-indicator').addClass('active').find('> div').addClass('bg-ls-blue text-white').removeClass('bg-ls-border dark:bg-ls-dark-border text-ls-muted');
-              $('#step1-indicator span').addClass('text-ls-blue font-bold').removeClass('text-ls-muted font-medium');
+  		questions.forEach(function (q) {
+  			var $pill = $('<button type="button" class="toggle-pill question-pill active">')
+  					.attr('data-value', q);
+  			var $check = $('<span class="pill-check"><i class="fas fa-check"></i></span>');
+  			var $text = $('<span>').text(q);
+  			$pill.append($check).append($text);
+  			$questionContainer.append($pill);
+  		});
 
-              $('#step2-indicator').removeClass('active').find('> div').addClass('bg-ls-border dark:bg-ls-dark-border text-ls-muted').removeClass('bg-ls-blue text-white');
-              $('#step2-indicator span').addClass('text-ls-muted font-medium').removeClass('text-ls-blue font-bold');
+  		updateSelectedCount();
+  		updateQuestionSelectedCount();
 
-              $('#step-progress-bar').css('width', '0%');
-          } else if (step === 2) {
-              $('#questionSelectionCard').hide();
-              $('#columnSelectionCard').hide().removeClass('hidden').fadeIn(300);
+  		$('#stepperIndicator').hide().removeClass('hidden').slideDown(400, 'linear');
+  		goToStep(1);
 
-              // Update indicator
-              $('#step2-indicator').addClass('active').find('> div').addClass('bg-ls-blue text-white').removeClass('bg-ls-border dark:bg-ls-dark-border text-ls-muted');
-              $('#step2-indicator span').addClass('text-ls-blue font-bold').removeClass('text-ls-muted font-medium');
+  		$('html, body').animate({scrollTop: $('#stepperIndicator').offset().top - 100}, 400, 'linear');
+  	}
 
-              $('#step-progress-bar').css('width', '100%');
-          }
-      }
+  	function goToStep(step) {
+  		if (step === 1) {
+  			$('#columnSelectionCard').hide();
+  			$('#questionSelectionCard').hide().removeClass('hidden').fadeIn(300);
 
-      $('#nextToGroupsBtn').on('click', function() {
-          goToStep(2);
-          $('html, body').animate({ scrollTop: $('#stepperIndicator').offset().top - 100 }, 300, 'linear');
-      });
+  			// Update indicator
+  			$('#step1-indicator').addClass('active').find('> div').addClass('bg-ls-blue text-white').removeClass('bg-ls-border dark:bg-ls-dark-border text-ls-muted');
+  			$('#step1-indicator span').addClass('text-ls-blue font-bold').removeClass('text-ls-muted font-medium');
 
-      $('#backToQuestionsBtn').on('click', function() {
-          goToStep(1);
-          $('html, body').animate({ scrollTop: $('#stepperIndicator').offset().top - 100 }, 300, 'linear');
-      });
+  			$('#step2-indicator').removeClass('active').find('> div').addClass('bg-ls-border dark:bg-ls-dark-border text-ls-muted').removeClass('bg-ls-blue text-white');
+  			$('#step2-indicator span').addClass('text-ls-muted font-medium').removeClass('text-ls-blue font-bold');
 
-      function updateSelectedCount() {
-          var count = $('.grouping-pill.active').length;
-          var total = $('.grouping-pill').length;
-          $('#selectedCount').text(count + ' od ' + total + ' odabrano');
-      }
+  			$('#step-progress-bar').css('width', '0%');
+  		} else if (step === 2) {
+  			$('#questionSelectionCard').hide();
+  			$('#columnSelectionCard').hide().removeClass('hidden').fadeIn(300);
 
-      function updateQuestionSelectedCount() {
-          var count = $('.question-pill.active').length;
-          var total = $('.question-pill').length;
-          $('#questionsSelectedCount').text(count + ' od ' + total + ' odabrano');
-          $('#calculateBtn').prop('disabled', count === 0);
-      }
+  			// Update indicator
+  			$('#step2-indicator').addClass('active').find('> div').addClass('bg-ls-blue text-white').removeClass('bg-ls-border dark:bg-ls-dark-border text-ls-muted');
+  			$('#step2-indicator span').addClass('text-ls-blue font-bold').removeClass('text-ls-muted font-medium');
 
-      $(document).on('click', '.grouping-pill', function() {
-          $(this).toggleClass('active');
-          updateSelectedCount();
-      });
+  			$('#step-progress-bar').css('width', '100%');
+  		}
+  	}
 
-      $(document).on('click', '.question-pill', function() {
-          $(this).toggleClass('active');
-          updateQuestionSelectedCount();
-      });
+  	$('#nextToGroupsBtn').on('click', function () {
+  		goToStep(2);
+  		$('html, body').animate({scrollTop: $('#stepperIndicator').offset().top - 100}, 300, 'linear');
+  	});
 
-      $('#selectAllBtn').on('click', function() {
-          $('.grouping-pill').addClass('active');
-          updateSelectedCount();
-      });
+  	$('#backToQuestionsBtn').on('click', function () {
+  		goToStep(1);
+  		$('html, body').animate({scrollTop: $('#stepperIndicator').offset().top - 100}, 300, 'linear');
+  	});
 
-      $('#deselectAllBtn').on('click', function() {
-          $('.grouping-pill').removeClass('active');
-          updateSelectedCount();
-      });
+  	function updateSelectedCount() {
+  		var count = $('.grouping-pill.active').length;
+  		var total = $('.grouping-pill').length;
+  		$('#selectedCount').text(count + ' od ' + total + ' odabrano');
+  	}
 
-      $('#selectAllQuestionsBtn').on('click', function() {
-          $('.question-pill').addClass('active');
-          updateQuestionSelectedCount();
-      });
+  	function updateQuestionSelectedCount() {
+  		var count = $('.question-pill.active').length;
+  		var total = $('.question-pill').length;
+  		$('#questionsSelectedCount').text(count + ' od ' + total + ' odabrano');
+  		$('#calculateBtn').prop('disabled', count === 0);
+  	}
 
-      $('#deselectAllQuestionsBtn').on('click', function() {
-          $('.question-pill').removeClass('active');
-          updateQuestionSelectedCount();
-      });
+  	$(document).on('click', '.grouping-pill', function () {
+  		$(this).toggleClass('active');
+  		updateSelectedCount();
+  	});
 
-      function submitCalculation(selectedGroups, selectedQuestions) {
-          var $form = $('#uploadForm');
-          $form.find('input.hidden-group, input.hidden-question').remove();
-          selectedGroups.forEach(function(col) {
-              $form.append($('<input type="hidden" name="selected_groups" class="hidden-group">').val(col));
-          });
-          selectedQuestions.forEach(function(q) {
-              $form.append($('<input type="hidden" name="selected_questions" class="hidden-question">').val(q));
-          });
-          $('#calculateBtn').prop('disabled', true)
-              .html('<i class="fas fa-spinner fa-spin"></i> Obrađujem...');
-          $('#skipGroupingBtn').prop('disabled', true);
-          $form[0].submit();
-      }
+  	$(document).on('click', '.question-pill', function () {
+  		$(this).toggleClass('active');
+  		updateQuestionSelectedCount();
+  	});
 
-      $('#calculateBtn').on('click', function() {
-          var groups = [];
-          $('.grouping-pill.active').each(function() {
-              groups.push($(this).data('value'));
-          });
-          var questions = [];
-          $('.question-pill.active').each(function() {
-              questions.push($(this).data('value'));
-          });
-          submitCalculation(groups, questions);
-      });
+  	$('#selectAllBtn').on('click', function () {
+  		$('.grouping-pill').addClass('active');
+  		updateSelectedCount();
+  	});
 
-      $('#skipGroupingBtn').on('click', function() {
-          var questions = [];
-          $('.question-pill.active').each(function() {
-              questions.push($(this).data('value'));
-          });
-          submitCalculation([], questions);
-      });
+  	$('#deselectAllBtn').on('click', function () {
+  		$('.grouping-pill').removeClass('active');
+  		updateSelectedCount();
+  	});
 
-      // ===== Grouping selector with slide animation =====
-      $('#groupingSelect').on('change', function() {
-          var selectedValue = $(this).val();
-          $('.results-group:visible').fadeOut(250, 'linear', function() {
-              $('#section-' + selectedValue).fadeIn(400, 'linear');
-          });
-      });
+  	$('#selectAllQuestionsBtn').on('click', function () {
+  		$('.question-pill').addClass('active');
+  		updateQuestionSelectedCount();
+  	});
 
-      // ===== Toggle legend panel =====
-      $('#toggleLegend').on('click', function() {
-          $('#legendPanel').slideToggle(300, 'linear');
-          $(this).toggleClass('active');
-      });
+  	$('#deselectAllQuestionsBtn').on('click', function () {
+  		$('.question-pill').removeClass('active');
+  		updateQuestionSelectedCount();
+  	});
 
-      // ===== Collapse/expand table bodies =====
-      $(document).on('click', '.toggle-table-btn', function() {
-          var targetId = $(this).data('target');
-          var $target = $('#' + targetId);
-          var $icon = $(this).find('i');
+  	function submitCalculation(selectedGroups, selectedQuestions) {
+  		var $form = $('#uploadForm');
+  		$form.find('input.hidden-group, input.hidden-question').remove();
+  		selectedGroups.forEach(function (col) {
+  			$form.append($('<input type="hidden" name="selected_groups" class="hidden-group">').val(col));
+  		});
+  		selectedQuestions.forEach(function (q) {
+  			$form.append($('<input type="hidden" name="selected_questions" class="hidden-question">').val(q));
+  		});
+  		$('#calculateBtn').prop('disabled', true)
+  				.html('<i class="fas fa-spinner fa-spin"></i> Obrađujem...');
+  		$('#skipGroupingBtn').prop('disabled', true);
+  		$form[0].submit();
+  	}
 
-          $target.slideToggle(350, 'linear', function() {
-              if ($target.is(':visible')) {
-                  $icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
-              } else {
-                  $icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
-              }
-          });
-      });
+  	$('#calculateBtn').on('click', function () {
+  		var groups = [];
+  		$('.grouping-pill.active').each(function () {
+  			groups.push($(this).data('value'));
+  		});
+  		var questions = [];
+  		$('.question-pill.active').each(function () {
+  			questions.push($(this).data('value'));
+  		});
+  		submitCalculation(groups, questions);
+  	});
 
-      // ===== Animate result rows on load =====
-      {% if results %}
-      $('.instruction-card, .upload-card').hide();
-      $('#columnSelectionCard, #questionSelectionCard, #stepperIndicator').hide();
-      $('#upload-section').removeClass('py-16 lg:py-20').addClass('py-0');
+  	$('#skipGroupingBtn').on('click', function () {
+  		var questions = [];
+  		$('.question-pill.active').each(function () {
+  			questions.push($(this).data('value'));
+  		});
+  		submitCalculation([], questions);
+  	});
 
-      $('.results-group.active .result-row').each(function(index) {
-          $(this).css({ opacity: 0, transform: 'translateY(15px)' });
-          $(this).delay(index * 30).animate({ opacity: 1 }, 300, 'linear', function() {
-              $(this).css('transform', 'translateY(0)');
-          });
-      });
+  	// ===== Grouping selector with slide animation =====
+  	$('#groupingSelect').on('change', function () {
+  		var selectedValue = $(this).val();
+  		$('.results-group:visible').fadeOut(250, 'linear', function () {
+  			$('#section-' + selectedValue).fadeIn(400, 'linear');
+  		});
+  	});
 
-      $('html, body').animate({
-          scrollTop: $('#results-section').offset().top - 80
-      }, 600, 'linear');
-      {% endif %}
+  	// ===== Toggle legend panel =====
+  	$('#toggleLegend').on('click', function () {
+  		$('#legendPanel').slideToggle(300, 'linear');
+  		$(this).toggleClass('active');
+  	});
 
-      // ===== Error alert auto-dismiss =====
-      {% if error %}
-      setTimeout(function() {
-          $('#errorAlert').fadeOut(500, 'linear');
-      }, 8000);
-      {% endif %}
+  	// ===== Collapse/expand table bodies =====
+  	$(document).on('click', '.toggle-table-btn', function () {
+  		var targetId = $(this).data('target');
+  		var $target = $('#' + targetId);
+  		var $icon = $(this).find('i');
 
-      // ===== Back to top button =====
-      $('#backToTop').on('click', function() {
-          $('html, body').animate({ scrollTop: 0 }, 500, 'linear');
-      });
+  		$target.slideToggle(350, 'linear', function () {
+  			if ($target.is(':visible')) {
+  				$icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+  			} else {
+  				$icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+  			}
+  		});
+  	});
 
-      // ===== Reset / Load new data =====
-      $('#resetBtn').on('click', function() {
-          detectionDone = false;
-          $('#results-section').slideUp(400, 'linear');
-          $('#columnSelectionCard, #questionSelectionCard, #stepperIndicator').slideUp(300, 'linear');
-          $('input.hidden-group, input.hidden-question').remove();
-          $('.instruction-card, .upload-card').slideDown(400, 'linear');
-          $('#upload-section').addClass('py-16 lg:py-20');
-          $('#uploadForm')[0].reset();
-          $('#fileInfo').addClass('hidden');
-          $('#submitBtn').show().prop('disabled', false)
-              .html('<i class="fas fa-upload"></i> Učitaj i izračunaj');
-          $('html, body').animate({ scrollTop: $('#upload-section').offset().top - 80 }, 400, 'linear');
-      });
+  	// ===== Animate result rows on load =====
+  	{% if results %}
+  	$('.instruction-card, .upload-card').hide();
+  	$('#columnSelectionCard, #questionSelectionCard, #stepperIndicator').hide();
+  	$('#upload-section').removeClass('py-16 lg:py-20').addClass('py-0');
 
-      // ===== AI Analysis AJAX =====
-      $('#aiAnalysisBtn').on('click', function() {
-          var $btn = $(this);
-          $btn.prop('disabled', true);
-          $btn.html('<i class="fas fa-spinner fa-spin"></i>');
+  	$('.results-group.active .result-row').each(function (index) {
+  		$(this).css({opacity: 0, transform: 'translateY(15px)'});
+  		$(this).delay(index * 30).animate({opacity: 1}, 300, 'linear', function () {
+  			$(this).css('transform', 'translateY(0)');
+  		});
+  	});
 
-          $('#aiResult').hide();
-          $('#aiError').hide();
-          $('#aiSpinner').show();
-          $('#aiCardWrapper').slideDown(350, 'linear');
+  	$('html, body').animate({
+  		scrollTop: $('#results-section').offset().top - 80
+  	}, 600, 'linear');
+  	{% endif %}
 
-          var analysisData = JSON.parse($('#analysisData').text());
+  	// ===== Error alert auto-dismiss =====
+  	{% if error %}
+  	setTimeout(function () {
+  		$('#errorAlert').fadeOut(500, 'linear');
+  	}, 8000);
+  	{% endif %}
 
-          $.ajax({
-              url: '{{ url_for("main.ai_analysis") }}',
-              method: 'POST',
-              contentType: 'application/json',
-              data: JSON.stringify(analysisData),
-              success: function(data) {
-                  $('#aiSpinner').slideUp(200, 'linear', function() {
-                      if (data.interpretation) {
-                          $('#aiResultText').html(data.interpretation);
-                          $('#aiResult').fadeIn(300, 'linear');
-                          $btn.fadeOut(300, 'linear');
-                      }
-                  });
-              },
-              error: function(xhr) {
-                  $('#aiSpinner').slideUp(200, 'linear', function() {
-                      var msg = 'Došlo je do pogreške s AI analizom. Molimo pokušajte kasnije.';
-                      try {
-                          var resp = JSON.parse(xhr.responseText);
-                          if (resp.error) msg = resp.error;
-                      } catch(e) {}
-                      $('#aiErrorText').text(msg);
-                      $('#aiError').fadeIn(300, 'linear');
-                  });
-                  $btn.prop('disabled', false);
-                  $btn.html('<i class="fas fa-wand-magic-sparkles"></i>');
-              }
-          });
-      });
+  	// ===== Back to top button =====
+  	$('#backToTop').on('click', function () {
+  		$('html, body').animate({scrollTop: 0}, 500, 'linear');
+  	});
 
-      // ===== Toggle AI card body =====
-      $('#toggleAiBody').on('click', function() {
-          var $icon = $(this).find('i');
-          $('#aiCardBody').slideToggle(300, 'linear', function() {
-              if ($(this).is(':visible')) {
-                  $icon.removeClass('fa-eye-slash').addClass('fa-eye');
-              } else {
-                  $icon.removeClass('fa-eye').addClass('fa-eye-slash');
-              }
-          });
-      });
+  	// ===== Reset / Load new data =====
+  	$('#resetBtn').on('click', function () {
+  		detectionDone = false;
+  		$('#results-section').slideUp(400, 'linear');
+  		$('#columnSelectionCard, #questionSelectionCard, #stepperIndicator').slideUp(300, 'linear');
+  		$('input.hidden-group, input.hidden-question').remove();
+  		$('.instruction-card, .upload-card').slideDown(400, 'linear');
+  		$('#upload-section').addClass('py-16 lg:py-20');
+  		$('#uploadForm')[0].reset();
+  		$('#fileInfo').addClass('hidden');
+  		$('#submitBtn').show().prop('disabled', false)
+  				.html('<i class="fas fa-upload"></i> Učitaj i izračunaj');
+  		$('html, body').animate({scrollTop: $('#upload-section').offset().top - 80}, 400, 'linear');
+  	});
 
-      // ===== Copy AI prompt to clipboard =====
-      $('#copyPromptBtn').on('click', function() {
-          var analysisData = JSON.parse($('#analysisData').text());
-          var statsJson = JSON.stringify(analysisData.overall, null, 2);
+  	// ===== AI Analysis AJAX =====
+  	$('#aiAnalysisBtn').on('click', function () {
+  		var $btn = $(this);
+  		$btn.prop('disabled', true);
+  		$btn.html('<i class="fas fa-spinner fa-spin"></i>');
 
-          var prompt = 'You are a statistics expert. A user conducted a Likert-scale (1-5) survey. '
-              + 'Below are the calculated descriptive statistics for each question.\n\n'
-              + 'Statistical abbreviations:\n'
-              + '- N = number of respondents\n'
-              + '- AS = arithmetic mean\n'
-              + '- SD = standard deviation\n'
-              + '- Median = median value\n'
-              + '- Ske = skewness\n'
-              + '- Kur = kurtosis\n'
-              + '- Max D = Kolmogorov-Smirnov statistic\n'
-              + '- K-S p = Kolmogorov-Smirnov p-value\n\n'
-              + 'Overall statistics:\n' + statsJson + '\n';
+  		$('#aiResult').hide();
+  		$('#aiError').hide();
+  		$('#aiSpinner').show();
+  		$('#aiCardWrapper').slideDown(350, 'linear');
 
-          if (analysisData.grouped && analysisData.groupings) {
-              var groupedJson = JSON.stringify(analysisData.grouped, null, 2);
-              prompt += '\nGrouped statistics by demographics:\n' + groupedJson + '\n';
-          }
+  		var analysisData = JSON.parse($('#analysisData').text());
 
-          prompt += '\nProvide a detailed and thorough interpretation. '
-              + 'Highlight which questions scored highest/lowest, whether responses '
-              + 'are normally distributed, and any notable patterns. '
-              + 'Answer in the SAME LANGUAGE as the question text.';
+  		$.ajax({
+  			url: '{{ url_for("main.ai_analysis") }}',
+  			method: 'POST',
+  			contentType: 'application/json',
+  			data: JSON.stringify(analysisData),
+  			success: function (data) {
+  				$('#aiSpinner').slideUp(200, 'linear', function () {
+  					if (data.interpretation) {
+  						$('#aiResultText').html(data.interpretation);
+  						$('#aiResult').fadeIn(300, 'linear');
+  						$btn.fadeOut(300, 'linear');
+  					}
+  				});
+  			},
+  			error: function (xhr) {
+  				$('#aiSpinner').slideUp(200, 'linear', function () {
+  					var msg = 'Došlo je do pogreške s AI analizom. Molimo pokušajte kasnije.';
+  					try {
+  						var resp = JSON.parse(xhr.responseText);
+  						if (resp.error) msg = resp.error;
+  					} catch (e) {
+  					}
+  					$('#aiErrorText').text(msg);
+  					$('#aiError').fadeIn(300, 'linear');
+  				});
+  				$btn.prop('disabled', false);
+  				$btn.html('<i class="fas fa-wand-magic-sparkles"></i>');
+  			}
+  		});
+  	});
 
-          navigator.clipboard.writeText(prompt).then(function() {
-              var $btn = $('#copyPromptBtn');
-              var original = $btn.html();
-              $btn.html('<i class="fas fa-check"></i> Kopirano!');
-              $btn.addClass('btn-primary').removeClass('btn-ghost');
-              setTimeout(function() {
-                  $btn.html(original);
-                  $btn.removeClass('btn-primary').addClass('btn-ghost');
-              }, 2000);
-          });
-      });
+  	// ===== Toggle AI card body =====
+  	$('#toggleAiBody').on('click', function () {
+  		var $icon = $(this).find('i');
+  		$('#aiCardBody').slideToggle(300, 'linear', function () {
+  			if ($(this).is(':visible')) {
+  				$icon.removeClass('fa-eye-slash').addClass('fa-eye');
+  			} else {
+  				$icon.removeClass('fa-eye').addClass('fa-eye-slash');
+  			}
+  		});
+  	});
 
-      // ===== Navbar scroll =====
-      $(window).on('scroll', function() {
-          var $nav = $('#mainNav');
-          if ($(window).scrollTop() > 50) {
-              $nav.removeClass('nav-transparent');
-          }
-      }).trigger('scroll');
+  	// ===== Copy AI prompt to clipboard =====
+  	$('#copyPromptBtn').on('click', function () {
+  		var analysisData = JSON.parse($('#analysisData').text());
+  		var statsJson = JSON.stringify(analysisData.overall, null, 2);
+
+  		var prompt = 'You are a statistics expert. A user conducted a Likert-scale (1-5) survey. '
+  				+ 'Below are the calculated descriptive statistics for each question.\n\n'
+  				+ 'Statistical abbreviations:\n'
+  				+ '- N = number of respondents\n'
+  				+ '- AS = arithmetic mean\n'
+  				+ '- SD = standard deviation\n'
+  				+ '- Median = median value\n'
+  				+ '- Ske = skewness\n'
+  				+ '- Kur = kurtosis\n'
+  				+ '- Max D = Kolmogorov-Smirnov statistic\n'
+  				+ '- K-S p = Kolmogorov-Smirnov p-value\n\n'
+  				+ 'Overall statistics:\n' + statsJson + '\n';
+
+  		if (analysisData.grouped && analysisData.groupings) {
+  			var groupedJson = JSON.stringify(analysisData.grouped, null, 2);
+  			prompt += '\nGrouped statistics by demographics:\n' + groupedJson + '\n';
+  		}
+
+  		prompt += '\nProvide a detailed and thorough interpretation. '
+  				+ 'Highlight which questions scored highest/lowest, whether responses '
+  				+ 'are normally distributed, and any notable patterns. '
+  				+ 'Answer in the SAME LANGUAGE as the question text.';
+
+  		navigator.clipboard.writeText(prompt).then(function () {
+  			var $btn = $('#copyPromptBtn');
+  			var original = $btn.html();
+  			$btn.html('<i class="fas fa-check"></i> Kopirano!');
+  			$btn.addClass('btn-primary').removeClass('btn-ghost');
+  			setTimeout(function () {
+  				$btn.html(original);
+  				$btn.removeClass('btn-primary').addClass('btn-ghost');
+  			}, 2000);
+  		});
+  	});
+
+  	// ===== Navbar scroll =====
+  	$(window).on('scroll', function () {
+  		var $nav = $('#mainNav');
+  		if ($(window).scrollTop() > 50) {
+  			$nav.removeClass('nav-transparent');
+  		}
+  	}).trigger('scroll');
   });
 </script>
 {% endblock %}
