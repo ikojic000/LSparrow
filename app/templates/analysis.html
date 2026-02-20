@@ -106,17 +106,30 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
     <div id="stepperIndicator" class="hidden mt-8">
       <div class="flex items-center justify-center max-w-md mx-auto">
         <!-- Step 1 -->
-        <div class="flex flex-col items-center relative z-10 step-item active" id="step1-indicator">
-          <div class="w-10 h-10 rounded-full bg-ls-blue text-white flex items-center justify-center font-bold border-4 border-white dark:border-ls-dark-bg shadow-md transition-all">1</div>
+        <div
+          class="flex flex-col items-center relative z-10 step-item active"
+          id="step1-indicator">
+          <div
+            class="w-10 h-10 rounded-full bg-ls-blue text-white flex items-center justify-center font-bold border-4 border-white dark:border-ls-dark-bg shadow-md transition-all">
+            1
+          </div>
           <span class="text-xs mt-2 font-bold text-ls-blue">Pitanja</span>
         </div>
         <!-- Connector -->
-        <div class="flex-1 h-1 bg-ls-border dark:bg-ls-dark-border -mt-6 mx-[-2px] relative z-0">
-          <div id="step-progress-bar" class="h-full bg-ls-blue w-0 transition-all duration-300"></div>
+        <div
+          class="flex-1 h-1 bg-ls-border dark:bg-ls-dark-border -mt-6 mx-[-2px] relative z-0">
+          <div
+            id="step-progress-bar"
+            class="h-full bg-ls-blue w-0 transition-all duration-300"></div>
         </div>
         <!-- Step 2 -->
-        <div class="flex flex-col items-center relative z-10 step-item" id="step2-indicator">
-          <div class="w-10 h-10 rounded-full bg-ls-border dark:bg-ls-dark-border text-ls-muted flex items-center justify-center font-bold border-4 border-white dark:border-ls-dark-bg shadow-sm transition-all">2</div>
+        <div
+          class="flex flex-col items-center relative z-10 step-item"
+          id="step2-indicator">
+          <div
+            class="w-10 h-10 rounded-full bg-ls-border dark:bg-ls-dark-border text-ls-muted flex items-center justify-center font-bold border-4 border-white dark:border-ls-dark-bg shadow-sm transition-all">
+            2
+          </div>
           <span class="text-xs mt-2 font-medium text-ls-muted">Grupiranje</span>
         </div>
       </div>
@@ -128,12 +141,14 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
       class="hidden bg-ls-card dark:bg-ls-dark-card rounded-2xl border border-ls-border dark:border-ls-dark-border shadow-lg mt-6 overflow-hidden">
       <div class="bg-ls-blue card-header-bar text-white">
         <h5 class="font-heading font-bold">
-          <i class="fas fa-question-circle mr-2"></i>Odaberite pitanja za analizu
+          <i class="fas fa-question-circle mr-2"></i>Odaberite pitanja za
+          analizu
         </h5>
       </div>
       <div class="p-6">
         <p class="text-ls-muted dark:text-ls-dark-muted text-sm mb-4">
-          Odaberite specifična pitanja s Likertovom skalom koja želite uključiti u statističku analizu.
+          Odaberite specifična pitanja s Likertovom skalom koja želite uključiti
+          u statističku analizu.
         </p>
         <div id="questionCheckboxes" class="flex flex-wrap gap-2"></div>
         <hr class="border-ls-border dark:border-ls-dark-border my-4" />
@@ -178,7 +193,8 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
       </div>
       <div class="p-6">
         <p class="text-ls-muted dark:text-ls-dark-muted text-sm mb-4">
-          Odaberite stupce po kojima želite grupirati rezultate (npr. spol, dob, grad).
+          Odaberite stupce po kojima želite grupirati rezultate (npr. spol, dob,
+          grad).
         </p>
         <div id="columnCheckboxes" class="flex flex-wrap gap-2"></div>
         <hr class="border-ls-border dark:border-ls-dark-border my-4" />
@@ -460,18 +476,25 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
     <!-- Overall Results -->
     <div id="section-overall" class="results-group active">
       <div
-        class="bg-white dark:bg-ls-dark-card rounded-xl border border-ls-border dark:border-ls-dark-border shadow-sm overflow-hidden mb-6">
+        class="bg-white dark:bg-ls-dark-card rounded-xl border border-ls-border dark:border-ls-dark-border shadow-sm overflow-hidden mb-6 capture-container">
         <div
           class="bg-ls-blue card-header-bar flex justify-between items-center">
           <h5 class="font-heading font-bold">
             <i class="fas fa-table mr-2"></i>
             Ukupna statistika ({{ results.overall|length }} pitanja)
           </h5>
-          <button
-            class="toggle-table-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
-            data-target="overallTableBody">
-            <i class="fas fa-chevron-up"></i>
-          </button>
+          <div class="flex items-center gap-2">
+            <button
+              class="capture-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
+              title="Preuzmi kao sliku">
+              <i class="fas fa-camera"></i>
+            </button>
+            <button
+              class="toggle-table-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
+              data-target="overallTableBody">
+              <i class="fas fa-chevron-up"></i>
+            </button>
+          </div>
         </div>
         <div id="overallTableBody">
           <div class="overflow-x-auto table-scroll">
@@ -558,7 +581,7 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
 
       {% for group_value, group_stats in results.grouped[group_key].items() %}
       <div
-        class="bg-white dark:bg-ls-dark-card rounded-xl border border-ls-border dark:border-ls-dark-border shadow-sm overflow-hidden mb-6">
+        class="bg-white dark:bg-ls-dark-card rounded-xl border border-ls-border dark:border-ls-dark-border shadow-sm overflow-hidden mb-6 capture-container">
         <div
           class="bg-ls-blue card-header-bar flex justify-between items-center">
           <h5 class="font-heading font-bold">
@@ -569,11 +592,18 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
               >{{ group_stats|length }} pitanja</span
             >
           </h5>
-          <button
-            class="toggle-table-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
-            data-target="group-{{ group_key }}-{{ loop.index }}">
-            <i class="fas fa-chevron-up"></i>
-          </button>
+          <div class="flex items-center gap-2">
+            <button
+              class="capture-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
+              title="Preuzmi kao sliku">
+              <i class="fas fa-camera"></i>
+            </button>
+            <button
+              class="toggle-table-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
+              data-target="group-{{ group_key }}-{{ loop.index }}">
+              <i class="fas fa-chevron-up"></i>
+            </button>
+          </div>
         </div>
         <div id="group-{{ group_key }}-{{ loop.index }}">
           <div class="overflow-x-auto table-scroll">
@@ -650,7 +680,85 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
   </div>
 </section>
 {% endif %} {% endblock %} {% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
+  $(document).on('click', '.capture-btn', function() {
+    const card = $(this).closest('.capture-container')[0];
+    const fileName = "analiza_" + new Date().getTime() + ".png";
+
+    // Create a temporary style for the cloned document to ensure correct rendering without oklch
+    const styleOverride = document.createElement('style');
+    styleOverride.innerHTML = `
+        .capture-container { background: white !important; color: black !important; padding: 20px !important; border-radius: 12px !important; }
+        table { border-collapse: collapse !important; width: 100% !important; margin-bottom: 1rem !important; }
+        th, td { border: 1px solid #cbd5e1 !important; padding: 10px 12px !important; text-align: left !important; color: #1e293b !important; }
+        th { background-color: #334155 !important; color: white !important; font-weight: bold !important; text-transform: uppercase !important; font-size: 0.75rem !important; }
+        .card-header-bar { background-color: #2563eb !important; color: white !important; padding: 12px 16px !important; border-radius: 8px 8px 0 0 !important; display: flex !important; justify-content: space-between !important; align-items: center !important; }
+        .card-header-bar h5 { margin: 0 !important; font-weight: bold !important; }
+        .text-center { text-align: center !important; }
+        .font-bold { font-weight: bold !important; }
+        .question-col { min-width: 250px !important; }
+        .capture-btn, .toggle-table-btn { display: none !important; } /* Hide buttons in capture */
+    `;
+
+    html2canvas(card, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        onclone: function(clonedDoc) {
+            // 1. Remove all external stylesheets to prevent oklch parsing errors
+            const links = clonedDoc.getElementsByTagName("link");
+            for (let i = links.length - 1; i >= 0; i--) {
+                if (links[i].rel === "stylesheet") {
+                    links[i].parentNode.removeChild(links[i]);
+                }
+            }
+
+            // 2. Sanitize all internal style tags
+            const styleTags = clonedDoc.getElementsByTagName("style");
+            for (let i = 0; i < styleTags.length; i++) {
+                if (/oklch|oklab/i.test(styleTags[i].innerHTML)) {
+                    styleTags[i].innerHTML = styleTags[i].innerHTML.replace(/(oklch|oklab)\([^)]+\)/gi, "#00000000");
+                }
+            }
+
+            // 3. Inject our safe styles
+            clonedDoc.head.appendChild(styleOverride);
+
+            // 4. Deep sanitize all elements and their inline/computed styles
+            const allElements = clonedDoc.getElementsByTagName('*');
+            for (let i = 0; i < allElements.length; i++) {
+                const el = allElements[i];
+                const s = window.getComputedStyle(el);
+
+                const props = ['color', 'backgroundColor', 'borderColor', 'outlineColor', 'fill', 'stroke'];
+                props.forEach(p => {
+                    const val = s[p];
+                    if (val && /oklch|oklab/i.test(val)) {
+                        if (p === 'backgroundColor') el.style.setProperty(p, '#ffffff', 'important');
+                        else if (p === 'color') el.style.setProperty(p, '#000000', 'important');
+                        else if (p.includes('Color')) el.style.setProperty(p, '#cbd5e1', 'important');
+                    }
+                });
+
+                // Remove any inline oklch
+                if (el.getAttribute('style') && /oklch|oklab/i.test(el.getAttribute('style'))) {
+                    const newStyle = el.getAttribute('style').replace(/(oklch|oklab)\([^)]+\)/gi, "inherit");
+                    el.setAttribute('style', newStyle);
+                }
+            }
+        }
+    }).then(canvas => {
+        const link = document.createElement("a");
+        link.download = fileName;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    }).catch(err => {
+        console.error("html2canvas error:", err);
+        alert("Greška pri izradi slike. Preglednik ne podržava capture ove stranice zbog modernih CSS boja (oklch). Pokušajte u drugom pregledniku ili koristite screenshot.");
+    });
+  });
+
   $(document).ready(function() {
 
       // ===== File input preview =====
