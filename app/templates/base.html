@@ -75,8 +75,15 @@
       })();
     </script>
 
+    <!-- Cookie Consent by Osano -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js"></script>
+
     <!-- Google tag (gtag.js) -->
-    <script
+    <!-- <script
       async
       src="https://www.googletagmanager.com/gtag/js?id=G-NR5VHHCB9D"></script>
     <script>
@@ -86,7 +93,7 @@
       }
       gtag("js", new Date());
       gtag("config", "G-NR5VHHCB9D");
-    </script>
+    </script> -->
   </head>
   <body
     id="page-top"
@@ -129,7 +136,7 @@
             </button>
             <button
               id="navToggle"
-              class="lg:hidden p-2 rounded-lg hover:bg-black/5 transition"
+              class="inline-flex lg:hidden"
               aria-label="Otvori navigaciju">
               <i class="fas fa-bars text-xl" id="navToggleIcon"></i>
             </button>
@@ -177,6 +184,65 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <!-- Custom JS -->
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+
+    <!-- ================= COOKIE CONSENT INIT ================= -->
+    <script>
+      window.addEventListener("load", function () {
+        function loadGoogleAnalytics() {
+          if (window.gaLoaded) return;
+          window.gaLoaded = true;
+
+          var script = document.createElement("script");
+          script.src =
+            "https://www.googletagmanager.com/gtag/js?id=G-NR5VHHCB9D";
+          script.async = true;
+          document.head.appendChild(script);
+
+          script.onload = function () {
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+              dataLayer.push(arguments);
+            }
+
+            gtag("js", new Date());
+            gtag("config", "G-NR5VHHCB9D", {
+              anonymize_ip: true,
+            });
+          };
+        }
+
+        window.cookieconsent.initialise({
+          palette: {
+            popup: { background: "#1e293b" },
+            button: { background: "#3b82f6" },
+          },
+          theme: "classic",
+          position: "bottom",
+          type: "opt-in",
+          content: {
+            message:
+              "Koristimo kolačiće kako bismo poboljšali funkcionalnost stranice i analizirali promet.",
+            allow: "Prihvati",
+            deny: "Odbij",
+            link: "Saznaj više",
+            href: "/privacy-policy",
+            policy: "Politika privatnosti",
+          },
+          onInitialise: function (status) {
+            if (this.hasConsented()) {
+              loadGoogleAnalytics();
+            }
+          },
+          onStatusChange: function (status) {
+            if (this.hasConsented()) {
+              loadGoogleAnalytics();
+            }
+          },
+        });
+      });
+    </script>
+    <!-- ======================================================== -->
+
     {% block extra_js %}{% endblock %}
   </body>
 </html>

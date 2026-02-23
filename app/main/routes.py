@@ -95,7 +95,9 @@ def analysis():
                     selected_groups = request.form.getlist("selected_groups")
                     selected_questions = request.form.getlist("selected_questions")
                     processor = CSVProcessor()
-                    results = processor.process(file, selected_groups, selected_questions)
+                    results = processor.process(
+                        file, selected_groups, selected_questions
+                    )
 
                     if not results["overall"]:
                         error = "Nisu pronađena pitanja s Likertovom skalom (1-5) u CSV datoteci"
@@ -178,7 +180,9 @@ def ai_analysis():
     try:
         model = current_app.config.get("GEMINI_MODEL", "")
         fallback_models = current_app.config.get("GEMINI_FALLBACK_MODELS", [])
-        ai_service = GeminiAIService(api_key, model=model, fallback_models=fallback_models)
+        ai_service = GeminiAIService(
+            api_key, model=model, fallback_models=fallback_models
+        )
         interpretation = ai_service.interpret_results(
             overall_stats=data["overall"],
             grouped_stats=data.get("grouped"),
@@ -195,3 +199,10 @@ def ai_analysis():
             ),
             500,
         )
+
+
+# --- Privacy Policy Page ---
+@bp.route("/privacy-policy")
+def privacy_policy():
+    """Privacy Policy page."""
+    return render_template("privacy_policy.html")

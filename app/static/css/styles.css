@@ -264,8 +264,152 @@
 #mainNav.nav-transparent > div > div > a:first-child:hover {
   color: #fff;
 }
+
+/* ===== Unified Icon Button Style ===== */
+.icon-btn,
+#darkModeToggle,
+#toggleAiBody,
+.toggle-table-btn,
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  padding: 0;
+}
+
+#navToggle {
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  padding: 0;
+}
+
+/* --- Light mode base colors --- */
+.icon-btn,
+#navToggle {
+  color: #64748b;
+}
+
+#darkModeToggle {
+  color: #64748b;
+}
+
+/* toggle-table-btn, copy-btn, toggleAiBody sit on blue card headers */
+.toggle-table-btn,
+.copy-btn,
+#toggleAiBody {
+  color: #f1f5f9;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* --- Light mode hover --- */
+.icon-btn:hover,
+#navToggle:hover {
+  background-color: #f1f5f9;
+  color: #2f6db5;
+  border-color: #cbd5e1;
+}
+
+#darkModeToggle:hover {
+  background-color: #f1f5f9;
+  color: #2f6db5;
+  border-color: #cbd5e1;
+}
+
+.toggle-table-btn:hover,
+.copy-btn:hover,
+#toggleAiBody:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #fbbf24;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* --- Dark mode base --- */
+.dark .icon-btn,
+.dark #navToggle {
+  border-color: #475569;
+  color: #94a3b8;
+}
+
+.dark #darkModeToggle {
+  border-color: #475569;
+  color: #f59e0b; /* always yellow in dark mode */
+}
+
+/* toggle-table-btn, copy-btn, toggleAiBody — always on blue headers */
+.dark .toggle-table-btn,
+.dark .copy-btn,
+.dark #toggleAiBody {
+  color: #f1f5f9;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* --- Dark mode hover --- */
+.dark .icon-btn:hover,
+.dark #navToggle:hover {
+  background-color: #334155;
+  border-color: #64748b;
+  color: #f1f5f9;
+}
+
+.dark #darkModeToggle:hover {
+  background-color: #334155;
+  border-color: #64748b;
+  color: #fbbf24;
+}
+
+.dark .toggle-table-btn:hover,
+.dark .copy-btn:hover,
+.dark #toggleAiBody:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #fbbf24;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* --- nav-transparent overrides (light) --- */
+#mainNav.nav-transparent .icon-btn,
 #mainNav.nav-transparent #navToggle {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#mainNav.nav-transparent #darkModeToggle {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#mainNav.nav-transparent .icon-btn:hover,
+#mainNav.nav-transparent #navToggle:hover,
+#mainNav.nav-transparent #darkModeToggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
   color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* --- nav-transparent overrides (dark) — keep yellow on darkModeToggle --- */
+.dark #mainNav.nav-transparent #darkModeToggle {
+  color: #f59e0b;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.dark #mainNav.nav-transparent #darkModeToggle:hover {
+  color: #fbbf24;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .nav-link-desktop {
@@ -565,43 +709,4 @@ thead th {
 
 .dark .page-header-gradient {
   background: linear-gradient(160deg, #0c1a2e 0%, #1a3f6f 60%, #245a96 100%);
-}
-
-/* Dark mode toggle button */
-.dark-mode-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
-  background: transparent;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 1rem;
-}
-.dark-mode-toggle:hover {
-  background-color: #f1f5f9;
-  color: #2f6db5;
-  border-color: #cbd5e1;
-}
-.dark .dark-mode-toggle {
-  border-color: #475569;
-  color: #f59e0b;
-}
-.dark .dark-mode-toggle:hover {
-  background-color: #334155;
-  border-color: #64748b;
-  color: #fbbf24;
-}
-#mainNav.nav-transparent .dark-mode-toggle {
-  border-color: rgba(255, 255, 255, 0.3);
-  color: rgba(255, 255, 255, 0.8);
-}
-#mainNav.nav-transparent .dark-mode-toggle:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.5);
 }

@@ -97,6 +97,11 @@
   a {
     @apply text-[var(--color-ls-primary)] hover:text-[var(--color-ls-primary-dark)] transition;
   }
+
+  li {
+    @apply text-[var(--color-ls-text-muted)];
+    @apply dark:text-[var(--color-ls-dark-muted)];
+  }
 }
 
 /* ==========================================================

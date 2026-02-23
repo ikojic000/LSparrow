@@ -312,10 +312,7 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
           <h5 class="font-heading font-bold">
             <i class="fas fa-robot mr-2"></i>AI interpretacija rezultata
           </h5>
-          <button
-            id="toggleAiBody"
-            class="p-1.5 rounded-lg hover:bg-white/20 transition text-white"
-            title="Prikaži/sakrij">
+          <button id="toggleAiBody" class="icon-btn" title="Prikaži/sakrij">
             <i class="fas fa-eye"></i>
           </button>
         </div>
@@ -484,13 +481,11 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
             Ukupna statistika ({{ results.overall|length }} pitanja)
           </h5>
           <div class="flex items-center gap-2">
-            <button
-              class="copy-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
-              title="Kopiraj tablicu">
+            <button class="copy-btn inline-flex" title="Kopiraj tablicu">
               <i class="fas fa-copy"></i>
             </button>
             <button
-              class="toggle-table-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
+              class="toggle-table-btn inline-flex"
               data-target="overallTableBody">
               <i class="fas fa-chevron-up"></i>
             </button>
@@ -593,13 +588,11 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
             >
           </h5>
           <div class="flex items-center gap-2">
-            <button
-              class="copy-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
-              title="Kopiraj tablicu">
+            <button class="copy-btn inline-flex" title="Kopiraj tablicu">
               <i class="fas fa-copy"></i>
             </button>
             <button
-              class="toggle-table-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
+              class="toggle-table-btn inline-flex"
               data-target="group-{{ group_key }}-{{ loop.index }}">
               <i class="fas fa-chevron-up"></i>
             </button>
@@ -680,13 +673,11 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
             Distribucija odgovora: {{ group_value }}
           </h5>
           <div class="flex items-center gap-2">
-            <button
-              class="copy-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
-              title="Kopiraj tablicu">
+            <button class="copy-btn inline-flex" title="Kopiraj tablicu">
               <i class="fas fa-copy"></i>
             </button>
             <button
-              class="toggle-table-btn p-1.5 rounded-lg hover:bg-white/20 transition text-white"
+              class="toggle-table-btn inline-flex"
               data-target="dist-{{ group_key }}-{{ loop.index }}">
               <i class="fas fa-chevron-up"></i>
             </button>
