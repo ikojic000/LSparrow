@@ -377,38 +377,48 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
     <!-- Controls Bar -->
     <div class="mb-6">
       <div
-        class="bg-white dark:bg-ls-dark-card rounded-xl border border-ls-border dark:border-ls-dark-border shadow-sm p-4">
+        class="relative bg-white dark:bg-ls-dark-card rounded-xl border border-ls-border dark:border-ls-dark-border shadow-sm p-4">
         {% if results.groupings %}
-        <div class="flex flex-col md:flex-row md:items-center gap-4">
+        <div
+          class="flex flex-col md:flex-row md:items-center gap-3 w-full overflow-hidden">
           <label
             for="groupingSelect"
-            class="font-semibold text-sm text-slate-700 dark:text-slate-200 whitespace-nowrap">
-            <i class="fas fa-filter mr-2 text-ls-blue"></i>Grupiraj statistiku
-            prema:
+            class="font-semibold text-sm text-slate-700 dark:text-slate-200 whitespace-nowrap md:shrink-0">
+            <i class="fas fa-filter mr-2 text-ls-blue"></i>
+            Grupiraj statistiku prema:
           </label>
-          <select
-            id="groupingSelect"
-            class="flex-1 px-4 py-2.5 border border-ls-border dark:border-ls-dark-border rounded-lg bg-white dark:bg-ls-dark-surface dark:text-ls-dark-text text-sm focus:outline-none focus:ring-2 focus:ring-ls-blue focus:border-ls-blue">
-            <option value="overall" selected>Ukupno (svi ispitanici)</option>
-            {% for key, info in results.groupings.items() %}
-            <option value="{{ key }}">
-              {{ info.label }} ({{ info.column }})
-            </option>
-            {% endfor %}
-          </select>
-          <button
-            id="toggleLegend"
-            class="btn btn-ghost btn-sm whitespace-nowrap">
-            <i class="fas fa-question-circle"></i>Legenda
-          </button>
+
+          <div class="flex items-center gap-3 flex-1 min-w-0 w-full">
+            <select
+              id="groupingSelect"
+              class="flex-1 min-w-0 w-0 px-4 py-2.5 border border-ls-border dark:border-ls-dark-border rounded-lg bg-white dark:bg-ls-dark-surface dark:text-ls-dark-text text-sm focus:outline-none focus:ring-2 focus:ring-ls-blue focus:border-ls-blue md:mr-9">
+              <option value="overall" selected>Ukupno (svi ispitanici)</option>
+              {% for key, info in results.groupings.items() %}
+              <option value="{{ key }}">
+                {{ info.label }} ({{ info.column }})
+              </option>
+              {% endfor %}
+            </select>
+
+            <button
+              id="toggleLegend"
+              class="btn btn-ghost btn-sm rounded-full w-7.5 h-7.5 absolute top-1.25 right-1.25 z-10">
+              <i class="fas fa-question-circle"></i>
+              <!-- Legenda -->
+            </button>
+          </div>
         </div>
         {% else %}
         <div class="flex justify-end">
-          <button id="toggleLegend" class="btn btn-ghost btn-sm">
-            <i class="fas fa-question-circle"></i>Legenda
+          <button
+            id="toggleLegend"
+            class="btn btn-ghost btn-sm rounded-full w-7.5 h-7.5">
+            <i class="fas fa-question-circle"></i>
+            <!-- Legenda -->
           </button>
         </div>
         {% endif %}
+
         <!-- Collapsible Legend -->
         <div
           id="legendPanel"
@@ -416,55 +426,61 @@ statistiku za pitanja na Likertovoj skali.{% endblock %} {% block content %}
           style="display: none">
           <div
             class="flex flex-wrap gap-x-5 gap-y-2 text-xs text-ls-muted dark:text-ls-dark-muted">
-            <span
-              ><span
-                class="inline-block px-2 py-0.5 bg-slate-700 text-white rounded text-[10px] font-semibold mr-1"
-                >N</span
-              >
-              Broj ispitanika</span
-            >
-            <span
-              ><span
-                class="inline-block px-2 py-0.5 bg-slate-700 text-white rounded text-[10px] font-semibold mr-1"
-                >AS</span
-              >
-              Aritmetička sredina</span
-            >
-            <span
-              ><span
-                class="inline-block px-2 py-0.5 bg-slate-700 text-white rounded text-[10px] font-semibold mr-1"
-                >SD</span
-              >
-              Standardna devijacija</span
-            >
-            <span
-              ><span
-                class="inline-block px-2 py-0.5 bg-slate-700 text-white rounded text-[10px] font-semibold mr-1"
-                >Ske</span
-              >
-              Asimetrija</span
-            >
-            <span
-              ><span
-                class="inline-block px-2 py-0.5 bg-slate-700 text-white rounded text-[10px] font-semibold mr-1"
-                >Kur</span
-              >
-              Zaobljenost</span
-            >
-            <span
-              ><span
-                class="inline-block px-2 py-0.5 bg-slate-700 text-white rounded text-[10px] font-semibold mr-1"
-                >Max D</span
-              >
-              K-S statistika</span
-            >
-            <span
-              ><span
-                class="inline-block px-2 py-0.5 bg-slate-700 text-white rounded text-[10px] font-semibold mr-1"
-                >K-S p</span
-              >
-              K-S p-vrijednost</span
-            >
+            <span>
+              <span
+                class="inline-block px-2 py-0.5 bg-slate-700 text-white rounded text-[10px] font-semibold mr-1">
+                N
+              </span>
+              Broj ispitanika
+            </span>
+
+            <span>
+              <span
+                class="inline-block px-2 py-0.5 bg-slate-700 text-white rounded text-[10px] font-semibold mr-1">
+                AS
+              </span>
+              Aritmetička sredina
+            </span>
+
+            <span>
+              <span
+                class="inline-block px-2 py-0.5 bg-slate-700 text-white rounded text-[10px] font-semibold mr-1">
+                SD
+              </span>
+              Standardna devijacija
+            </span>
+
+            <span>
+              <span
+                class="inline-block px-2 py-0.5 bg-slate-700 text-white rounded text-[10px] font-semibold mr-1">
+                Ske
+              </span>
+              Asimetrija
+            </span>
+
+            <span>
+              <span
+                class="inline-block px-2 py-0.5 bg-slate-700 text-white rounded text-[10px] font-semibold mr-1">
+                Kur
+              </span>
+              Zaobljenost
+            </span>
+
+            <span>
+              <span
+                class="inline-block px-2 py-0.5 bg-slate-700 text-white rounded text-[10px] font-semibold mr-1">
+                Max D
+              </span>
+              K-S statistika
+            </span>
+
+            <span>
+              <span
+                class="inline-block px-2 py-0.5 bg-slate-700 text-white rounded text-[10px] font-semibold mr-1">
+                K-S p
+              </span>
+              K-S p-vrijednost
+            </span>
           </div>
         </div>
       </div>
